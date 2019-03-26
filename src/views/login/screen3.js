@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+
 import {
   StyleSheet,
   View,
@@ -44,6 +45,8 @@ export default class LoginScreen2 extends Component {
     this.state = {
       email: '',
       password: '',
+      userCode: '',
+      isTrainer: '',
       fontLoaded: false,
       selectedCategory: 0,
       isLoading: false,
@@ -93,6 +96,48 @@ export default class LoginScreen2 extends Component {
         isPasswordValid: password.length >= 8 || this.passwordInput.shake(),
       });
     }, 1500);
+
+    fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/CheckIfEmailExists?Email=' + this.state.email, {
+      method: 'POST',
+      headers: { "Content-type": "application/json; charset=UTF-8" },
+      body: JSON.stringify({}),
+
+    })
+      .then(res => res.json())
+      .then(response => {
+        if (response) {
+          this.checkPassword();
+        }
+        else alert("The Email doesn't exist in the system!");
+      })
+
+      .catch(error => console.warn('Error:', error.message));
+  }
+
+
+  checkPassword() {
+    const LoginDetails = {
+      Email: this.state.email,
+      Password: this.state.password
+    }
+    fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/CheckIfPasswordMatches', {
+
+      method: 'POST',
+      headers: { "Content-type": "application/json; charset=UTF-8" },
+      body: JSON.stringify(LoginDetails),
+    })
+      .then(res => res.json())
+      .then(response => {
+        if (response.userCode != 0) {
+          this.setState({ userCode: response.UserCode, isTrainer: response.isTrainer });
+          //this.props.navigation.navigate('Components', { userCode: this.state.UserCode });
+          alert("Success! User Code= " + this.state.userCode);
+        }
+        else
+          alert("Incorrect password");
+      })
+
+      .catch(error => console.warn('Error:', error.message));
   }
 
   signUp() {
@@ -283,11 +328,11 @@ export default class LoginScreen2 extends Component {
                   />
                 </View>
               </KeyboardAvoidingView>
-             
+
             </View>
           ) : (
-            <Text>Loading...</Text>
-          )}
+              <Text>Loading...</Text>
+            )}
         </ImageBackground>
       </View>
     );

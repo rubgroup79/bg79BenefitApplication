@@ -36,13 +36,17 @@ export default class LoginScreen3 extends Component {
       isLoading: false,
       selectedType: null,
       fontLoaded: false,
-      username: '',
+      userCode: 0,
+      isTrainer: 0,
+      firstName: '',
+      lastName: '',
       email: '',
       password: '',
       confirmationPassword: '',
       emailValid: true,
       passwordValid: true,
-      usernameValid: true,
+      lastNameValid: true,
+      firstNameValid: true,
       confirmationPasswordValid: true,
     };
 
@@ -67,7 +71,8 @@ export default class LoginScreen3 extends Component {
 
   signup() {
     LayoutAnimation.easeInEaseOut();
-    const usernameValid = this.validateUsername();
+    const firstNameValid = this.validateFirstName();
+    const lastNameValid = this.validateLastName();
     const emailValid = this.validateEmail();
     const passwordValid = this.validatePassword();
     const confirmationPasswordValid = this.validateConfirmationPassword();
@@ -75,24 +80,42 @@ export default class LoginScreen3 extends Component {
       emailValid &&
       passwordValid &&
       confirmationPasswordValid &&
-      usernameValid
+      firstNameValid&&
+      lastNameValid
+
     ) {
+     
       this.setState({ isLoading: true });
       setTimeout(() => {
         LayoutAnimation.easeInEaseOut();
         this.setState({ isLoading: false });
         Alert.alert('🎸', 'You rock');
       }, 1500);
+
+      
     }
   }
 
-  validateUsername() {
-    const { username } = this.state;
-    const usernameValid = username.length > 0;
+  print(){
+    console.warn(this.state.firstName + ' ' +this.state.lastName + ' ' + this.state.email + ' ' + this.state.password);
+  }
+
+  validateFirstName() {
+    const { firstName } = this.state;
+    const firstNameValid = firstName.length > 0;
     LayoutAnimation.easeInEaseOut();
-    this.setState({ usernameValid });
-    usernameValid || this.usernameInput.shake();
-    return usernameValid;
+    this.setState({ firstNameValid });
+    firstNameValid || this.firstNameInput.shake();
+    return firstNameValid;
+  }
+
+  validateLastName() {
+    const { lastName } = this.state;
+    const lastNameValid = lastName.length > 0;
+    LayoutAnimation.easeInEaseOut();
+    this.setState({ lastNameValid });
+    lastNameValid || this.lastNameInput.shake();
+    return lastNameValid;
   }
 
   validateEmail() {
@@ -137,8 +160,10 @@ export default class LoginScreen3 extends Component {
       password,
       passwordValid,
       confirmationPasswordValid,
-      username,
-      usernameValid,
+      firstName,
+      lastName,
+      firstNameValid,
+      lastNameValid,
     } = this.state;
 
     return !fontLoaded ? (
@@ -157,43 +182,55 @@ export default class LoginScreen3 extends Component {
           <Text style={styles.whoAreYouText}>WHO YOU ARE ?</Text>
           <View style={styles.userTypesContainer}>
             <UserTypeItem
-              label="COOL"
+              label="Trainee"
               labelColor="#ECC841"
               image={USER_COOL}
               onPress={() => this.setSelectedType('parent')}
               selected={selectedType === 'parent'}
             />
             <UserTypeItem
-              label="STUDENT"
+              label="Trainer"
               labelColor="#2CA75E"
               image={USER_STUDENT}
-              onPress={() => this.setSelectedType('child')}
+              onPress={() => {
+                this.setSelectedType('child');
+                this.setState({isTrainer:1});
+              }}
               selected={selectedType === 'child'}
-            />
-            <UserTypeItem
-              label="HARRY POTTER"
-              labelColor="#36717F"
-              image={USER_HP}
-              onPress={() => this.setSelectedType('teacher')}
-              selected={selectedType === 'teacher'}
             />
           </View>
           <View style={{ width: '80%', alignItems: 'center' }}>
             <FormInput
-              refInput={input => (this.usernameInput = input)}
+              refInput={input => (this.firstNameInput = input)}
               icon="user"
-              value={username}
-              onChangeText={username => this.setState({ username })}
-              placeholder="Username"
+              value={firstName}
+              onChangeText={firstName => this.setState({ firstName })}
+              placeholder="First Name"
               returnKeyType="next"
               errorMessage={
-                usernameValid ? null : "Your username can't be blank"
+                firstNameValid ? null : "Your First Name can't be blank"
               }
               onSubmitEditing={() => {
-                this.validateUsername();
+                this.validateFirstName();
+                this.lastNameInput.focus();
+              }}
+            />
+             <FormInput
+              refInput={input => (this.lastNameInput = input)}
+              icon="user"
+              value={lastName}
+              onChangeText={lastName => this.setState({ lastName })}
+              placeholder="Last Name"
+              returnKeyType="next"
+              errorMessage={
+                lastNameValid ? null : "Your Last Name can't be blank"
+              }
+              onSubmitEditing={() => {
+                this.validateLastName();
                 this.emailInput.focus();
               }}
             />
+           
             <FormInput
               refInput={input => (this.emailInput = input)}
               icon="envelope"
@@ -262,7 +299,7 @@ export default class LoginScreen3 extends Component {
             disabled={isLoading}
           />
         </KeyboardAvoidingView>
-        <View style={styles.loginHereContainer}>
+        {/* <View style={styles.loginHereContainer}>
           <Text style={styles.alreadyAccountText}>
             Already have an account.
           </Text>
@@ -274,7 +311,7 @@ export default class LoginScreen3 extends Component {
             underlayColor="transparent"
             onPress={() => Alert.alert('🔥', 'You can login here')}
           />
-        </View>
+        </View> */}
       </ScrollView>
     );
   }

@@ -14,7 +14,7 @@ const LoginDrawerItem = StackNavigator(
 );
 
 LoginDrawerItem.navigationOptions = {
-  drawerLabel: 'Login',
+  drawerLabel: 'Login111',
   drawerIcon: ({ tintColor }) => (
     <Icon
       name="email"

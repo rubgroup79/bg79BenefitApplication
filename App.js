@@ -2,7 +2,8 @@ import React from 'react';
 import { registerRootComponent, AppLoading, Asset, Font } from 'expo';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { View, Image, Dimensions } from 'react-native';
-import { DrawerNavigator, DrawerItems } from 'react-navigation';
+import { DrawerNavigator, DrawerItems} from 'react-navigation';
+
 
 import Components from './src/drawer/components';
 import Ratings from './src/drawer/ratings';
@@ -30,6 +31,7 @@ const CustomDrawerContentComponent = props => (
     </View>
   </View>
 );
+
 
 const MainRoot = DrawerNavigator(
   {
@@ -63,7 +65,7 @@ const MainRoot = DrawerNavigator(
     },
   },
   {
-    initialRouteName: 'Login',
+    initialRouteName: 'Components',
     contentOptions: {
       activeTintColor: '#548ff7',
       activeBackgroundColor: 'transparent',
@@ -101,6 +103,7 @@ export default class AppContainer extends React.Component {
     isReady: false,
   };
 
+
   async _loadAssetsAsync() {
     const imageAssets = cacheImages([
       require('./assets/images/bg_screen1.jpg'),
@@ -128,8 +131,8 @@ export default class AppContainer extends React.Component {
       );
     }
 
-    return <MainRoot />;
+    return (<MainRoot />)
+
   }
 }
-
 registerRootComponent(AppContainer);
