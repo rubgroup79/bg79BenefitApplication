@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { StackNavigator } from 'react-navigation';
 
 import {
   StyleSheet,
@@ -26,6 +27,8 @@ const BG_IMAGE = require('../../../assets/images/bg_screen4.jpg');
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
 
+
+
 const TabSelector = ({ selected }) => {
   return (
     <View style={styles.selectorContainer}>
@@ -37,6 +40,8 @@ const TabSelector = ({ selected }) => {
 TabSelector.propTypes = {
   selected: PropTypes.bool.isRequired,
 };
+
+
 
 export default class LoginScreen2 extends Component {
   constructor(props) {
@@ -171,6 +176,7 @@ export default class LoginScreen2 extends Component {
     const isSignUpPage = selectedCategory === 1;
     return (
       <View style={styles.container}>
+     
         <ImageBackground source={BG_IMAGE} style={styles.bgImage}>
           {this.state.fontLoaded ? (
             <View>

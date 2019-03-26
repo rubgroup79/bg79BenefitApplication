@@ -9,6 +9,7 @@ import Components from './src/drawer/components';
 import Ratings from './src/drawer/ratings';
 import Pricing from './src/drawer/pricing';
 import Login from './src/drawer/login';
+import SigninTrainee from './src/views/login/signinTrainee';
 import Profile from './src/drawer/profile';
 import Lists from './src/drawer/lists';
 import Settings from './src/drawer/settings';
@@ -35,6 +36,10 @@ const CustomDrawerContentComponent = props => (
 
 const MainRoot = DrawerNavigator(
   {
+    SigninTrainee: {
+      path: '/signinTrainee',
+      screen: SigninTrainee,
+    },
     Login: {
       path: '/login',
       screen: Login,
@@ -65,7 +70,7 @@ const MainRoot = DrawerNavigator(
     },
   },
   {
-    initialRouteName: 'Components',
+    initialRouteName: 'SigninTrainee',
     contentOptions: {
       activeTintColor: '#548ff7',
       activeBackgroundColor: 'transparent',

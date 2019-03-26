@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { Font } from 'expo';
 import { Input, Button } from 'react-native-elements';
-
+import MyDatePicker from '../../Components/datePicker';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
 // Enable LayoutAnimation on Android
@@ -230,7 +230,13 @@ export default class LoginScreen3 extends Component {
                 this.emailInput.focus();
               }}
             />
-           
+            <View>
+              <Text style={styles.TextLable}>
+                Date of Birth
+              </Text>
+             <MyDatePicker
+            ></MyDatePicker>
+           </View>
             <FormInput
               refInput={input => (this.emailInput = input)}
               icon="envelope"
@@ -283,6 +289,7 @@ export default class LoginScreen3 extends Component {
                 this.signup();
               }}
             />
+           
           </View>
           <Button
             loading={isLoading}
@@ -290,7 +297,7 @@ export default class LoginScreen3 extends Component {
             containerStyle={{ flex: -1 }}
             buttonStyle={styles.signUpButton}
             linearGradientProps={{
-              colors: ['#FF9800', '#F44336'],
+              colors: ['rgba(216, 121, 112, 1)', 'rgba(216, 121, 112, 1)'],
               start: [1, 0],
               end: [0.2, 0],
             }}
@@ -459,4 +466,10 @@ const styles = StyleSheet.create({
     fontFamily: 'lightitalic',
     fontSize: 12,
   },
+  TextLable:{
+    color:'#7384B4',
+    fontSize:16,
+    marginLeft: 10,
+    fontFamily: 'light',
+  }
 });
