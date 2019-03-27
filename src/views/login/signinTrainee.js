@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Button, Input, Slider } from 'react-native-elements';
 import { Font } from 'expo';
-import MyDatePicker from '../../Components/datePicker';
+
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 

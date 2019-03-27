@@ -13,20 +13,68 @@ import {
   View,
 } from 'react-native';
 import { Font } from 'expo';
-import { Input, Button } from 'react-native-elements';
+import { Input, Button, withTheme, Slider } from 'react-native-elements';
 import MyDatePicker from '../../Components/datePicker';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
 // Enable LayoutAnimation on Android
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
-
+const SLIDER_SIZE= SCREEN_WIDTH -150;
 const USER_COOL = require('../../../assets/images/user-cool.png');
 const USER_STUDENT = require('../../../assets/images/user-student.png');
 const USER_HP = require('../../../assets/images/user-hp.png');
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
+
+class CustomButton extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      selected: false,
+    };
+  }
+
+  componentDidMount() {
+    const { selected } = this.props;
+
+    this.setState({
+      selected,
+    });
+  }
+
+  render() {
+    const { title } = this.props;
+    const { selected } = this.state;
+
+    return (
+      <Button
+        title={title}
+        titleStyle={{ fontSize: 15, color: 'white', fontFamily: 'regular' }}
+        buttonStyle={
+          selected
+            ? {
+                backgroundColor: 'rgba(213, 100, 140, 1)',
+                borderRadius: 100,
+                width: 127,
+              }
+            : {
+                borderWidth: 1,
+                borderColor: 'white',
+                borderRadius: 30,
+                width: 127,
+                backgroundColor: 'transparent',
+              }
+        }
+        containerStyle={{ marginRight: 10 }}
+        onPress={() => this.setState({ selected: !selected })}
+      />
+    );
+  }
+}
+
 
 export default class LoginScreen3 extends Component {
   constructor(props) {
@@ -42,20 +90,13 @@ export default class LoginScreen3 extends Component {
       lastName: '',
       email: '',
       password: '',
-      confirmationPassword: '',
-      emailValid: true,
-      passwordValid: true,
       lastNameValid: true,
       firstNameValid: true,
       confirmationPasswordValid: true,
     };
 
     this.setSelectedType = this.setSelectedType.bind(this);
-    this.validateEmail = this.validateEmail.bind(this);
-    this.validatePassword = this.validatePassword.bind(this);
-    this.validateConfirmationPassword = this.validateConfirmationPassword.bind(
-      this
-    );
+  
     this.signup = this.signup.bind(this);
   }
 
@@ -73,13 +114,8 @@ export default class LoginScreen3 extends Component {
     LayoutAnimation.easeInEaseOut();
     const firstNameValid = this.validateFirstName();
     const lastNameValid = this.validateLastName();
-    const emailValid = this.validateEmail();
-    const passwordValid = this.validatePassword();
-    const confirmationPasswordValid = this.validateConfirmationPassword();
     if (
-      emailValid &&
-      passwordValid &&
-      confirmationPasswordValid &&
+      
       firstNameValid&&
       lastNameValid
 
@@ -118,34 +154,6 @@ export default class LoginScreen3 extends Component {
     return lastNameValid;
   }
 
-  validateEmail() {
-    const { email } = this.state;
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    const emailValid = re.test(email);
-    LayoutAnimation.easeInEaseOut();
-    this.setState({ emailValid });
-    emailValid || this.emailInput.shake();
-    return emailValid;
-  }
-
-  validatePassword() {
-    const { password } = this.state;
-    const passwordValid = password.length >= 8;
-    LayoutAnimation.easeInEaseOut();
-    this.setState({ passwordValid });
-    passwordValid || this.passwordInput.shake();
-    return passwordValid;
-  }
-
-  validateConfirmationPassword() {
-    const { password, confirmationPassword } = this.state;
-    const confirmationPasswordValid = password === confirmationPassword;
-    LayoutAnimation.easeInEaseOut();
-    this.setState({ confirmationPasswordValid });
-    confirmationPasswordValid || this.confirmationPasswordInput.shake();
-    return confirmationPasswordValid;
-  }
-
   setSelectedType = selectedType =>
     LayoutAnimation.easeInEaseOut() || this.setState({ selectedType });
 
@@ -154,12 +162,6 @@ export default class LoginScreen3 extends Component {
       isLoading,
       selectedType,
       fontLoaded,
-      confirmationPassword,
-      email,
-      emailValid,
-      password,
-      passwordValid,
-      confirmationPasswordValid,
       firstName,
       lastName,
       firstNameValid,
@@ -170,7 +172,7 @@ export default class LoginScreen3 extends Component {
       <Text> Loading... </Text>
     ) : (
       <ScrollView
-        scrollEnabled={false}
+        //scrollEnabled={true}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={styles.container}
       >
@@ -178,8 +180,18 @@ export default class LoginScreen3 extends Component {
           behavior="position"
           contentContainerStyle={styles.formContainer}
         >
+        <ScrollView style={{   flex: 1,
+    paddingBottom: 20,
+    paddingTop: 30,
+    backgroundColor: '#293046',
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
+    textAlign:'center',
+    alignContent:"center"}}>
+        <View style={{flex:1, alignContent:'center',justifyContent:'center', textAlign:'center'}}>
           <Text style={styles.signUpText}>Sign up</Text>
           <Text style={styles.whoAreYouText}>WHO YOU ARE ?</Text>
+          </View>
           <View style={styles.userTypesContainer}>
             <UserTypeItem
               label="Trainee"
@@ -199,8 +211,8 @@ export default class LoginScreen3 extends Component {
               selected={selectedType === 'child'}
             />
           </View>
-          <View style={{ width: '80%', alignItems: 'center' }}>
-            <FormInput
+          <View style={styles.viewContainer}>
+            <FormInput style={{ flex:1}}
               refInput={input => (this.firstNameInput = input)}
               icon="user"
               value={firstName}
@@ -215,7 +227,7 @@ export default class LoginScreen3 extends Component {
                 this.lastNameInput.focus();
               }}
             />
-             <FormInput
+             <FormInput  style={{ flex:1}}
               refInput={input => (this.lastNameInput = input)}
               icon="user"
               value={lastName}
@@ -230,95 +242,114 @@ export default class LoginScreen3 extends Component {
                 this.emailInput.focus();
               }}
             />
-            <View>
-              <Text style={styles.TextLable}>
+            <View  style={{ flex:1, flexDirection:'row',}}>
+              <Text style={styles.dateOfBirthLabel}>
                 Date of Birth
               </Text>
-             <MyDatePicker
+             <MyDatePicker  style={{ flex:1}}
+             
             ></MyDatePicker>
            </View>
-            <FormInput
-              refInput={input => (this.emailInput = input)}
-              icon="envelope"
-              value={email}
-              onChangeText={email => this.setState({ email })}
-              placeholder="Email"
-              keyboardType="email-address"
-              returnKeyType="next"
-              errorMessage={
-                emailValid ? null : 'Please enter a valid email address'
-              }
-              onSubmitEditing={() => {
-                this.validateEmail();
-                this.passwordInput.focus();
-              }}
-            />
-            <FormInput
-              refInput={input => (this.passwordInput = input)}
-              icon="lock"
-              value={password}
-              onChangeText={password => this.setState({ password })}
-              placeholder="Password"
-              secureTextEntry
-              returnKeyType="next"
-              errorMessage={
-                passwordValid ? null : 'Please enter at least 8 characters'
-              }
-              onSubmitEditing={() => {
-                this.validatePassword();
-                this.confirmationPasswordInput.focus();
-              }}
-            />
-            <FormInput
-              refInput={input => (this.confirmationPasswordInput = input)}
-              icon="lock"
-              value={confirmationPassword}
-              onChangeText={confirmationPassword =>
-                this.setState({ confirmationPassword })
-              }
-              placeholder="Confirm Password"
-              secureTextEntry
-              errorMessage={
-                confirmationPasswordValid
-                  ? null
-                  : 'The password fields are not identics'
-              }
-              returnKeyType="go"
-              onSubmitEditing={() => {
-                this.validateConfirmationPassword();
-                this.signup();
-              }}
-            />
-           
+
+              <View style={{flex:1}}>
+              <Text 
+                    style={style=styles.textHeadlines}
+                    >
+                  Search Radius
+                </Text>
+                <View style={styles.sliderContainerStyle} >
+                <Text style={styles.sliderRangeText}>0</Text >
+                    <Slider
+                        minimumTrackTintColor='white'
+                        maximumTrackTintColor='gray'
+                        thumbTintColor='rgba(213, 100, 140, 1)'
+                        style={styles.sliderStyle}
+                        minimumValue={0}
+                        step={1}
+                        maximumValue={30}
+                        value={this.state.value}
+                        onValueChange={value => this.setState({ searchRadius: value })}
+                    />
+                    <Text style={style=styles.sliderRangeText}>30</Text>
+                    
+                </View>
+                <Text style={{color:'white', textAlign:'center', fontSize:15, fontWeight:'bold'}}>Radius: {this.state.searchRadius}</Text>
+              </View>
+
+           <View style={{flex: 1}}>
+                    <Text
+                    style={styles.textHeadlines}
+                    >
+                  Favorite Sport Types
+                </Text>
+                <View style={{ flex: 1, width: SCREEN_WIDTH, marginTop: 20,  }}>
+                  <ScrollView
+                    style={{ flex: 1 }}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                  >
+                    <View
+                      style={{
+                        flex: 1,
+                        flexDirection: 'column',
+                        height: 170,
+                        marginLeft: 40,
+                        marginRight: 10,
+                      }}
+                    >
+                      <View style={{ flex: 1, flexDirection: 'row' }}>
+                        <CustomButton title="Short Run" selected={true} />
+                        <CustomButton title=" Yoga" selected={true} />
+                        <CustomButton title="Jogging" />
+                      </View>
+                      <View style={{ flex: 1, flexDirection: 'row' }}>
+                        <CustomButton title="Long Run" />
+                        <CustomButton title="Walking" selected={true} />
+                        <CustomButton title=" Yoga" selected={true} />
+                      </View>
+                      <View style={{ flex: 1, flexDirection: 'row' }}>
+                        <CustomButton title="Pilatis" selected={true} />
+                        <CustomButton title=" Yoga" selected={true} />
+                        <CustomButton title=" Yoga" selected={true} />
+                      </View>
+                      
+                    </View>
+                  </ScrollView>
+                </View>
+              </View>
           </View>
           <Button
-            loading={isLoading}
-            title="SIGNUP"
-            containerStyle={{ flex: -1 }}
-            buttonStyle={styles.signUpButton}
-            linearGradientProps={{
-              colors: ['rgba(216, 121, 112, 1)', 'rgba(216, 121, 112, 1)'],
-              start: [1, 0],
-              end: [0.2, 0],
-            }}
-            titleStyle={styles.signUpButtonText}
-            onPress={this.signup}
-            disabled={isLoading}
-          />
+                containerStyle={{ marginVertical: 20 }}
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginBottom:10
+                }}
+                buttonStyle={{
+                  height: 55,
+                  width: SCREEN_WIDTH - 250,
+                  borderRadius: 30,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                linearGradientProps={{
+                  colors: ['rgba(216, 121, 112, 1)', 'rgba(216, 121, 112, 1)'],
+                  start: [1, 0],
+                  end: [0.2, 0],
+                }}
+                title="NEXT"
+                titleStyle={{
+                  fontFamily: 'regular',
+                  fontSize: 20,
+                  color: 'white',
+                  textAlign: 'center',
+                }}
+                onPress={() => console.log('Submit')}
+                activeOpacity={0.5}
+              />
+          </ScrollView>
         </KeyboardAvoidingView>
-        {/* <View style={styles.loginHereContainer}>
-          <Text style={styles.alreadyAccountText}>
-            Already have an account.
-          </Text>
-          <Button
-            title="Login here"
-            titleStyle={styles.loginHereText}
-            containerStyle={{ flex: -1 }}
-            buttonStyle={{ backgroundColor: 'transparent' }}
-            underlayColor="transparent"
-            onPress={() => Alert.alert('🔥', 'You can login here')}
-          />
-        </View> */}
       </ScrollView>
     );
   }
@@ -373,7 +404,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingBottom: 20,
-    paddingTop: 20,
+    paddingTop: 30,
     backgroundColor: '#293046',
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
@@ -386,20 +417,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   signUpText: {
+    flex:1,
     color: 'white',
     fontSize: 28,
     fontFamily: 'light',
+    marginTop:15,
+    textAlign:'center',
   },
   whoAreYouText: {
+    flex:1,
     color: '#7384B4',
     fontFamily: 'bold',
     fontSize: 14,
+    marginTop:15,
+    textAlign:'center',
   },
   userTypesContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: SCREEN_WIDTH,
     alignItems: 'center',
+    marginTop:30
   },
   userTypeItemContainer: {
     alignItems: 'center',
@@ -466,10 +504,60 @@ const styles = StyleSheet.create({
     fontFamily: 'lightitalic',
     fontSize: 12,
   },
-  TextLable:{
+
+  viewContainer:
+  {
+    flex:1,
+    flexDirection:'column',
+    textAlign:'center',
+    alignItems:'center',
+    justifyContent:'space-between',
+    width: '80%',
+    margin:35,
+  },
+  dateOfBirthLabel:{
+    marginTop:9,
     color:'#7384B4',
     fontSize:16,
     marginLeft: 10,
     fontFamily: 'light',
-  }
+    flex: 1,
+    textAlign:'center'
+  },
+  textHeadlines:{
+    flex: 1,
+    fontSize: 15,
+    color: 'rgba(216, 121, 112, 1)',
+    fontFamily: 'regular',
+    marginLeft: 40,
+    marginTop:30
+},
+textHeadlines:{
+  flex: 1,
+  fontSize: 15,
+  color: 'rgba(216, 121, 112, 1)',
+  fontFamily: 'regular',
+  marginLeft: 40,
+  marginTop:30
+},
+sliderStyle:{
+  width: SLIDER_SIZE,
+  marginTop:25,
+},
+sliderContainerStyle:{
+  flex: 1,
+  alignItems: 'stretch',
+  justifyContent: 'center',
+  //alignItems: 'center',
+  flexDirection:'row',
+
+},
+sliderRangeText:{
+flex:1,
+color:'white',
+fontWeight:'bold',
+marginTop:37,
+textAlign:'center'
+},
+
 });

@@ -20,6 +20,7 @@ export default class MyDatePicker extends Component {
         date={this.state.date}
         mode="date"
         placeholder="select date"
+       
         format="DD-MM-YYYY"
         minDate="01-01-1900"
         maxDate= {MaxDate}
@@ -32,11 +33,18 @@ export default class MyDatePicker extends Component {
             left: 0,
             top: 4,
             marginLeft: 0,
-            
-            
           },
+            dateText:{
+                color: 'white',
+                justifyContent: 'flex-start'
+              },
+              placeholderText: {
+                fontSize: 18,
+                color: '#7384B4'
+            },
           dateInput: {
-            marginLeft: 36
+            marginLeft: 36,
+             borderWidth: 0
           }
           // ... You can check the source to find the other keys.
         }}
