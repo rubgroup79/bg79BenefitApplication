@@ -4,11 +4,12 @@ import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { View, Image, Dimensions } from 'react-native';
 import { DrawerNavigator, DrawerItems} from 'react-navigation';
 
-
+import Login from "./src/views/login/login";
+import SignIn1 from "./src/views/login/signIn1";
 import Components from './src/drawer/components';
 import Ratings from './src/drawer/ratings';
 import Pricing from './src/drawer/pricing';
-import Login from './src/drawer/login';
+//import Login from './src/drawer/login';
 import SigninTrainee from './src/views/login/signinTrainee';
 import Profile from './src/drawer/profile';
 import Lists from './src/drawer/lists';
@@ -36,9 +37,19 @@ const CustomDrawerContentComponent = props => (
 
 const MainRoot = DrawerNavigator(
   {
+    SignIn1: {
+      path: '/signIn1',
+      screen: SignIn1,
+      navigationOptions: {
+        drawerLabel:()=>null
+      }
+    },
     SigninTrainee: {
       path: '/signinTrainee',
       screen: SigninTrainee,
+      navigationOptions: {
+        drawerLabel:()=>null
+      }
     },
     Login: {
       path: '/login',

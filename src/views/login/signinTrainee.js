@@ -6,17 +6,24 @@ import {
   SafeAreaView,
   Image,
   ScrollView,
+  LayoutAnimation,
   Dimensions,
   StatusBar,
+  TouchableOpacity,
 } from 'react-native';
 import { Button, Input, Slider } from 'react-native-elements';
 import { Font } from 'expo';
+import GenderButton from '../../Components/genderButton';
+//import UserTypeItem from '../../Components/userTypeItem';
 
-
+const MALE_AVATAR = require('../../../Images/MaleAvatar.png');
+const FEMALE_AVATAR = require('../../../Images/FemaleAvatar.png');
+const BOTH_AVATAR = require('../../../Images/BothAvatar.png');
 const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-const IMAGE_SIZE = SCREEN_WIDTH - 200;
-const SLIDER_SIZE= SCREEN_WIDTH -150;
+const IMAGE_SIZE = SCREEN_WIDTH - 250;
+const SLIDER_SIZE = SCREEN_WIDTH - 150;
 
 class CustomButton extends Component {
   constructor() {
@@ -24,6 +31,7 @@ class CustomButton extends Component {
 
     this.state = {
       selected: false,
+
     };
   }
 
@@ -46,17 +54,17 @@ class CustomButton extends Component {
         buttonStyle={
           selected
             ? {
-                backgroundColor: 'rgba(213, 100, 140, 1)',
-                borderRadius: 100,
-                width: 127,
-              }
+              backgroundColor: 'rgba(213, 100, 140, 1)',
+              borderRadius: 100,
+              width: 127,
+            }
             : {
-                borderWidth: 1,
-                borderColor: 'white',
-                borderRadius: 30,
-                width: 127,
-                backgroundColor: 'transparent',
-              }
+              borderWidth: 1,
+              borderColor: 'white',
+              borderRadius: 30,
+              width: 127,
+              backgroundColor: 'transparent',
+            }
         }
         containerStyle={{ marginRight: 10 }}
         onPress={() => this.setState({ selected: !selected })}
@@ -71,8 +79,27 @@ export default class SigninTrainee extends Component {
 
     this.state = {
       fontLoaded: false,
-      searchRadius: 0,
+      selectedType: null,
+      email: '',
+      password: '',
+      firstName: '',
+      lastName: '',
+      dateOfBirth: '',
+      sportCategories: [],
+      gender: null,
+      isTrainer: null,
+      searchRadius: 5,
+      image:'',
+      partnerGender: '',
+      trainerGender: '',
+      minPartnerAge: 0,
+      maxPartnerAge:0,
+      minBudget:0,
+      maxBudget:0,
+
     };
+
+    this.setSelectedType = this.setSelectedType.bind(this);
   }
 
   async componentDidMount() {
@@ -83,8 +110,36 @@ export default class SigninTrainee extends Component {
       bold: require('../../../assets/fonts/Montserrat-Bold.ttf'),
     });
 
-    this.setState({ fontLoaded: true });
+    this.setState({ 
+      fontLoaded: true,
+    });
   }
+
+  submit()
+  {
+  //   fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/CheckIfEmailExists?Email=' + this.state.email, {
+  //     method: 'POST',
+  //     headers: { "Content-type": "application/json; charset=UTF-8" },
+  //     body: JSON.stringify({}),
+
+  //   })
+  //     .then(res => res.json())
+  //     .then(response => {
+  //       if (response) {
+  //         alert('Email already exists!');
+  //       }
+  //       else  this.props.navigation.navigate('SignIn1', {email: this.state.email, password: this.state.password});
+  //     })
+
+  //     .catch(error => console.warn('Error:', error.message));
+   
+
+  // }
+  }
+
+
+  setSelectedType = selectedType =>
+    LayoutAnimation.easeInEaseOut() || this.setState({ selectedType });
 
   render() {
     return (
@@ -110,178 +165,58 @@ export default class SigninTrainee extends Component {
                   }}
                 />
               </View>
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: 'row',
-                  marginTop: 20,
-                  marginHorizontal: 40,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
+
+
+              <Text
+                style={style = styles.textHeadlines}
               >
-                <Text
-                  style={{
-                    flex: 1,
-                    fontSize: 26,
-                    color: 'white',
-                    fontFamily: 'bold',
-                  }}
-                >
-                  Theresa
+                Search Radius
                 </Text>
-                <Text
-                  style={{
-                    flex: 0.5,
-                    fontSize: 15,
-                    color: 'gray',
-                    textAlign: 'left',
-                    marginTop: 5,
-                  }}
-                >
-                  0.8 mi
-                </Text>
-                <Text
-                  style={{
-                    flex: 1,
-                    fontSize: 26,
-                    color: 'green',
-                    fontFamily: 'bold',
-                    textAlign: 'right',
-                  }}
-                >
-                  84%
-                </Text>
-              </View>
-                <Text 
-                    style={style=styles.textHeadlines}
-                    >
-                  Search Radius
-                </Text>
-                <View style={styles.sliderContainerStyle} >
+              <View style={styles.sliderContainerStyle} >
                 <Text style={styles.sliderRangeText}>0</Text >
-                    <Slider
-                        minimumTrackTintColor='white'
-                        maximumTrackTintColor='gray'
-                        thumbTintColor='rgba(213, 100, 140, 1)'
-                        style={styles.sliderStyle}
-                        minimumValue={0}
-                        step={1}
-                        maximumValue={30}
-                        value={this.state.value}
-                        onValueChange={value => this.setState({ searchRadius: value })}
+                <Slider
+                  minimumTrackTintColor='white'
+                  maximumTrackTintColor='gray'
+                  thumbTintColor='rgba(213, 100, 140, 1)'
+                  style={styles.sliderStyle}
+                  minimumValue={0}
+                  step={1}
+                  maximumValue={30}
+                  value={this.state.searchRadius}
+                  onValueChange={value => this.setState({ searchRadius: value })}
+                />
+                <Text style={style = styles.sliderRangeText}>30</Text>
+
+              </View>
+              <Text style={{ color: 'white', textAlign: 'center', fontSize: 15, fontWeight: 'bold' }}>Radius: {this.state.searchRadius}</Text>
+
+              <View style={styles.partnerPreferencesStyle}>
+                <Text style={style = styles.partnersGenderHeadline}>
+                  Partner's Gender
+                    </Text>
+                <View style={styles.partnerPreferencesContainerStyle} >
+
+                  <View style={styles.userTypesContainer}>
+                    <GenderButton
+                      image={MALE_AVATAR}
+                      onPress={() => this.setSelectedType('Male')}
+                      selected={this.state.selectedType === 'Male'}
                     />
-                    <Text style={style=styles.sliderRangeText}>30</Text>
-                    
+                    <GenderButton
+                      image={FEMALE_AVATAR}
+                      onPress={() => { this.setSelectedType('Female'); }}
+                      selected={this.state.selectedType === 'Female'}
+                    />
+                    <GenderButton
+                      image={BOTH_AVATAR}
+                      onPress={() => { this.setSelectedType('Both'); }}
+                      selected={this.state.selectedType === 'Both'}
+                    />
+                  </View>
                 </View>
-                <Text style={{color:'white', textAlign:'center', fontSize:15, fontWeight:'bold'}}>Radius: {this.state.searchRadius}</Text>
-                
                
-                <View style={{flex: 1}}>
-                    <Text
-                    style={styles.textHeadlines}
-                    >
-                  Sport Types
-                </Text>
-                <View style={{ flex: 1, width: SCREEN_WIDTH, marginTop: 20 }}>
-                  <ScrollView
-                    style={{ flex: 1 }}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                  >
-                    <View
-                      style={{
-                        flex: 1,
-                        flexDirection: 'column',
-                        height: 170,
-                        marginLeft: 40,
-                        marginRight: 10,
-                      }}
-                    >
-                      <View style={{ flex: 1, flexDirection: 'row' }}>
-                        <CustomButton title="Short Run" selected={true} />
-                        <CustomButton title=" Yoga" selected={true} />
-                        <CustomButton title="Jogging" />
-                      </View>
-                      <View style={{ flex: 1, flexDirection: 'row' }}>
-                        <CustomButton title="Long Run" />
-                        <CustomButton title="Walking" selected={true} />
-                        <CustomButton title=" Yoga" selected={true} />
-                      </View>
-                      <View style={{ flex: 1, flexDirection: 'row' }}>
-                        <CustomButton title="Pilatis" selected={true} />
-                        <CustomButton title=" Yoga" selected={true} />
-                        <CustomButton title=" Yoga" selected={true} />
-                      </View>
-                      
-                    </View>
-                  </ScrollView>
-                </View>
               </View>
-              <View style={{ flex: 1, marginTop: 30 }}>
-                <Text
-                  style={style=styles.textHeadlines}
-                >
-                  INFO
-                </Text>
-                <View
-                    style={styles.inputContainer}>
-                    <Input
-                    placeholder='Tell other trainees about you...'
-                    placeholderTextColor="#7384B4"
-                    inputStyle={styles.inputStyle}
-                    multiline={true}
-                    numberOfLines={5}
-                    containerStyle={{ width: '100%' }}
-                    inputContainerStyle={{
-                    borderWidth: 1,
-                    borderRadius: 5,
-                    }}
-                    >
-                    </Input>
-                </View>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: 'row',
-                    marginTop: 20,
-                    marginHorizontal: 30,
-                  }}
-                >
-                  <View style={{ flex: 1, flexDirection: 'row' }}>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.infoTypeLabel}>Age</Text>
-                      <Text style={styles.infoTypeLabel}>Height</Text>
-                      <Text style={styles.infoTypeLabel}>Ethnicity</Text>
-                      <Text style={styles.infoTypeLabel}>Sign</Text>
-                      <Text style={styles.infoTypeLabel}>Religion</Text>
-                    </View>
-                    <View style={{ flex: 1, marginLeft: 10 }}>
-                      <Text style={styles.infoAnswerLabel}>26</Text>
-                      <Text style={styles.infoAnswerLabel}>5'4"</Text>
-                      <Text style={styles.infoAnswerLabel}>White</Text>
-                      <Text style={styles.infoAnswerLabel}>Pisces</Text>
-                      <Text style={styles.infoAnswerLabel}>Catholic</Text>
-                    </View>
-                  </View>
-                  <View style={{ flex: 1, flexDirection: 'row' }}>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.infoTypeLabel}>Body Type</Text>
-                      <Text style={styles.infoTypeLabel}>Diet</Text>
-                      <Text style={styles.infoTypeLabel}>Smoke</Text>
-                      <Text style={styles.infoTypeLabel}>Drink</Text>
-                      <Text style={styles.infoTypeLabel}>Drugs</Text>
-                    </View>
-                    <View style={{ flex: 1, marginLeft: 10, marginRight: -20 }}>
-                      <Text style={styles.infoAnswerLabel}>Fit</Text>
-                      <Text style={styles.infoAnswerLabel}>Vegan</Text>
-                      <Text style={styles.infoAnswerLabel}>No</Text>
-                      <Text style={styles.infoAnswerLabel}>No</Text>
-                      <Text style={styles.infoAnswerLabel}>Never</Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
+
               <Button
                 containerStyle={{ marginVertical: 20 }}
                 style={{
@@ -308,19 +243,21 @@ export default class SigninTrainee extends Component {
                   color: 'white',
                   textAlign: 'center',
                 }}
-                onPress={() => console.log('Submit')}
+                onPress={()=>this.submit()}
+                
                 activeOpacity={0.5}
               />
-              
+
             </ScrollView>
           </View>
         ) : (
-          <Text>Loading...</Text>
-        )}
+            <Text>Loading...</Text>
+          )}
       </SafeAreaView>
     );
   }
 }
+
 
 const styles = StyleSheet.create({
   statusBar: {
@@ -356,38 +293,71 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: 'light',
     fontSize: 16,
-    height:100,
-   
+    height: 100,
+
   },
-  inputContainer:{
-      marginTop: 25
+  inputContainer: {
+    marginTop: 25
   },
-  sliderStyle:{
-      width: SLIDER_SIZE,
-      marginTop:25,
+  sliderStyle: {
+    width: SLIDER_SIZE,
+    marginTop: 25,
   },
-  sliderContainerStyle:{
-      flex: 1,
-      alignItems: 'stretch',
-      justifyContent: 'center',
-      //alignItems: 'center',
-      flexDirection:'row',
-  
-},
-sliderRangeText:{
-    flex:1,
-    color:'white',
-    fontWeight:'bold',
-    marginTop:37,
-    textAlign:'center'
-},
-textHeadlines:{
+  sliderContainerStyle: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginTop: -18
+  },
+
+  partnerPreferencesContainerStyle: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    margin: 10,
+    //alignItems: 'center',
+    flexDirection: 'row',
+    marginRight: 40
+
+  },
+  sliderRangeText: {
+    flex: 1,
+    color: 'white',
+    fontWeight: 'bold',
+    marginTop: 37,
+    textAlign: 'center'
+  },
+  textHeadlines: {
     flex: 1,
     fontSize: 15,
     color: 'rgba(216, 121, 112, 1)',
     fontFamily: 'regular',
     marginLeft: 40,
-    marginTop:30
-}
+    marginTop: 30
+  },
+  partnersGenderHeadline: {
+    flex: 1,
+    fontSize: 15,
+    color: 'rgba(216, 121, 112, 1)',
+    fontFamily: 'regular',
+    marginLeft: 40,
+    marginTop: 30
+  },
+
+  userTypesContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: SCREEN_WIDTH,
+    alignItems: 'center',
+    marginTop: -18,
+  },
+  partnerPreferencesStyle: {
+    flex: 1,
+    flexDirection: 'row',
+    marginTop: 10
+  }
+
 
 });

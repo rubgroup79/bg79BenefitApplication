@@ -43,15 +43,13 @@ TabSelector.propTypes = {
 
 
 
-export default class LoginScreen2 extends Component {
+export default class Login extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       email: '',
       password: '',
-      userCode: '',
-      isTrainer: '',
       fontLoaded: false,
       selectedCategory: 0,
       isLoading: false,
@@ -64,6 +62,8 @@ export default class LoginScreen2 extends Component {
     this.login = this.login.bind(this);
     this.signUp = this.signUp.bind(this);
   }
+
+
 
   async componentDidMount() {
     await Font.loadAsync({
@@ -137,6 +137,7 @@ export default class LoginScreen2 extends Component {
           this.setState({ userCode: response.UserCode, isTrainer: response.isTrainer });
           //this.props.navigation.navigate('Components', { userCode: this.state.UserCode });
           alert("Success! User Code= " + this.state.userCode);
+          
         }
         else
           alert("Incorrect password");
@@ -159,6 +160,24 @@ export default class LoginScreen2 extends Component {
           password == passwordConfirmation || this.confirmationInput.shake(),
       });
     }, 1500);
+
+    fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/CheckIfEmailExists?Email=' + this.state.email, {
+      method: 'POST',
+      headers: { "Content-type": "application/json; charset=UTF-8" },
+      body: JSON.stringify({}),
+
+    })
+      .then(res => res.json())
+      .then(response => {
+        if (response) {
+          alert('Email already exists!');
+        }
+        else  this.props.navigation.navigate('SignIn1', {email: this.state.email, password: this.state.password});
+      })
+
+      .catch(error => console.warn('Error:', error.message));
+   
+
   }
 
   render() {
