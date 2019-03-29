@@ -159,7 +159,7 @@ export default class SignIn1 extends Component {
     };
 
     this.setSelectedType = this.setSelectedType.bind(this);
-
+    this.setDate= this.setDate.bind(this);  
     this.signup = this.signup.bind(this);
   }
 
@@ -214,8 +214,9 @@ export default class SignIn1 extends Component {
     console.warn(this.state.firstName + ' ' + this.state.lastName + ' ' + this.state.email + ' ' + this.state.password);
   }
 
-  setDateOfBirth(date) {
+  setDate(date) {
     this.setState({ dateOfBirth: date });
+    
   }
 
   validateFirstName() {
@@ -419,7 +420,7 @@ export default class SignIn1 extends Component {
               </Text>
                   <MyDatePicker
                     style={{ flex: 1 }}
-                    setDate={this.setDateOfBirth}
+                    setDate={this.setDate}
                   ></MyDatePicker>
                 </View>
 

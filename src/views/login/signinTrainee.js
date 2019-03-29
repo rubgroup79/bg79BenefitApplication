@@ -15,6 +15,11 @@ import { Button, Input, Slider } from 'react-native-elements';
 import { Font } from 'expo';
 import GenderButton from '../../Components/genderButton';
 //import UserTypeItem from '../../Components/userTypeItem';
+import Icon from "react-native-vector-icons/AntDesign";
+import Icon1 from "react-native-vector-icons/Ionicons";
+import ActionButton from 'react-native-action-button';
+
+import ImagePickerComponent from '../../Components/ImagePicker';
 
 const MALE_AVATAR = require('../../../Images/MaleAvatar.png');
 const FEMALE_AVATAR = require('../../../Images/FemaleAvatar.png');
@@ -24,6 +29,8 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 const IMAGE_SIZE = SCREEN_WIDTH - 250;
 const SLIDER_SIZE = SCREEN_WIDTH - 150;
+const MalePicture = require('../../../Images/MaleAvatar.png');
+const FemalePicture = require('../../../Images/FemaleAvatar.png');
 
 class CustomButton extends Component {
   constructor() {
@@ -89,13 +96,13 @@ export default class SigninTrainee extends Component {
       gender: null,
       isTrainer: null,
       searchRadius: 5,
-      image:'',
+      picture: '',
       partnerGender: '',
       trainerGender: '',
       minPartnerAge: 0,
-      maxPartnerAge:0,
-      minBudget:0,
-      maxBudget:0,
+      maxPartnerAge: 0,
+      minBudget: 0,
+      maxBudget: 0,
 
     };
 
@@ -110,32 +117,94 @@ export default class SigninTrainee extends Component {
       bold: require('../../../assets/fonts/Montserrat-Bold.ttf'),
     });
 
-    this.setState({ 
+    this.setState({
       fontLoaded: true,
     });
   }
 
-  submit()
-  {
-  //   fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/CheckIfEmailExists?Email=' + this.state.email, {
-  //     method: 'POST',
-  //     headers: { "Content-type": "application/json; charset=UTF-8" },
-  //     body: JSON.stringify({}),
+  submit() {
+    const pictureValid = this.validatePicture();
+    const partnerGenderValid = this.validatePartnerGender();
+    const trainerGenderValid = this.validateTrainerGender();
 
-  //   })
-  //     .then(res => res.json())
-  //     .then(response => {
-  //       if (response) {
-  //         alert('Email already exists!');
-  //       }
-  //       else  this.props.navigation.navigate('SignIn1', {email: this.state.email, password: this.state.password});
-  //     })
+    if (
+      pictureValid &&
+      partnerGenderValid &&
+      trainerGenderValid
+    ) {
+      let Trainee = {
+        Email: this.props.navigation.getParam('email'),
+        Password: this.props.navigation.getParam('password'),
+        FirstName: this.props.navigation.getParam('firstName'),
+        LastName: this.props.navigation.getParam('lastName'),
+        Gender: this.props.navigation.getParam('gender'),
+        DateOfBirth: this.props.navigation.getParam('dateOfBirth'),
+        SportCategories: this.props.navigation.getParam('sportCategories'),
+        IsTrainer: 0,
+        Picture: 'this.state.picture',
+        SearchRadius: this.state.searchRadius,
+        MinBudget: 100,
+        MaxBudget: 200,
+        MinParntnerAge: 26,
+        MaxPartnerAge: 35,
+        PartnerGender: this.state.partnerGender,
+        TrainerGender: 'Both',
+        // Picture: this.state.picture,
+        // MinBudget: this.state.minBudget,
+        // MaxBudget: this.state.maxBudget,
+        // MinPartnerAge: this.state.minPartnerAge,
+        // MaxPartnerAge: this.state.maxPartnerAge,
+        // TrainerGender: this.state.trainerGender,
+      }
 
-  //     .catch(error => console.warn('Error:', error.message));
-   
+      fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/InsertTrainee', {
+        method: 'POST',
+        headers: { "Content-type": "application/json; charset=UTF-8" },
+        body: JSON.stringify(Trainee),
 
-  // }
+      })
+        .then(res => res.json())
+        .then(response => {
+          if (response == 0) {
+            alert('Error');
+          }
+          else alert('User Code: ' + response);
+        })
+
+        .catch(error => console.warn('Error:', error.message));
+    }
+
+
+
   }
+
+  validatePicture() {
+    if (this.state.picture == null) {
+      alert('Please insert picture');
+      return false;
+    }
+    else return true;
+
+  }
+
+  validatePartnerGender() {
+    if (this.state.partnerGender == null) {
+      alert('Please select prefered partner gender');
+      return false;
+    }
+    else return true;
+
+  }
+
+  validateTrainerGender() {
+    if (this.state.trainerGender == null) {
+      alert('Please select prefered trainer gender');
+      return false;
+    }
+    else return true;
+
+  }
+
 
 
   setSelectedType = selectedType =>
@@ -149,22 +218,57 @@ export default class SigninTrainee extends Component {
           <View style={{ flex: 1, backgroundColor: 'rgba(47,44,60,1)' }}>
             <View style={styles.statusBar} />
             <View style={styles.navBar}>
-              <Text style={styles.nameHeader}>Stav Shalechet</Text>
+              <Text style={styles.nameHeader}>{this.state.firstName + ' ' + this.state.lastName}</Text>
             </View>
             <ScrollView style={{ flex: 1 }}>
+           
               <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                 <Image
-                  source={{
-                    uri:
-                      'https://static.pexels.com/photos/428336/pexels-photo-428336.jpeg',
-                  }}
+                  source={this.props.navigation.getParam('gender') == 'Male' ? MalePicture : FemalePicture}
                   style={{
                     width: IMAGE_SIZE,
                     height: IMAGE_SIZE,
                     borderRadius: 10,
                   }}
                 />
-              </View>
+                <ActionButton style={styles.editImageButton} 
+                renderIcon={ active => active ? (  <Icon1
+                      name="md-create"
+                      size={15}
+                      style={styles.uploadImageIcon}
+                    />) : 
+                    (  <Icon1
+                      name="md-create"
+                      size={15}
+                      style={styles.uploadImageIcon}
+                    />)
+                
+                }
+                verticalOrientation='down'
+                buttonColor='#d0d6e0'
+                size={33}
+                >
+                
+                <ActionButton.Item
+                buttonColor= 'white'
+                >
+                    <Icon
+                      name="upload"
+                      size={15}
+                      style={styles.uploadImageIcon}
+                    />
+                </ActionButton.Item>
+                <ActionButton.Item
+                buttonColor= 'white'
+                >
+                    <Icon
+                      name="camera"
+                      size={15}
+                      style={styles.uploadImageIcon}
+                    />
+                </ActionButton.Item>
+                </ActionButton> 
+            </View> 
 
 
               <Text
@@ -199,22 +303,37 @@ export default class SigninTrainee extends Component {
                   <View style={styles.userTypesContainer}>
                     <GenderButton
                       image={MALE_AVATAR}
-                      onPress={() => this.setSelectedType('Male')}
+                      onPress={
+                        () => {
+                          this.setSelectedType('Male')
+                          this.setState({ partnerGender: 'Male' })
+                        }
+                      }
                       selected={this.state.selectedType === 'Male'}
                     />
                     <GenderButton
                       image={FEMALE_AVATAR}
-                      onPress={() => { this.setSelectedType('Female'); }}
+                      onPress={
+                        () => {
+                          this.setSelectedType('Female')
+                          this.setState({ partnerGender: 'Female' })
+                        }
+                      }
                       selected={this.state.selectedType === 'Female'}
                     />
                     <GenderButton
                       image={BOTH_AVATAR}
-                      onPress={() => { this.setSelectedType('Both'); }}
+                      onPress={
+                        () => {
+                          this.setSelectedType('Both')
+                          this.setState({ partnerGender: 'Both' })
+                        }
+                      }
                       selected={this.state.selectedType === 'Both'}
                     />
                   </View>
                 </View>
-               
+
               </View>
 
               <Button
@@ -243,8 +362,8 @@ export default class SigninTrainee extends Component {
                   color: 'white',
                   textAlign: 'center',
                 }}
-                onPress={()=>this.submit()}
-                
+                onPress={() => this.submit()}
+
                 activeOpacity={0.5}
               />
 
@@ -257,6 +376,7 @@ export default class SigninTrainee extends Component {
     );
   }
 }
+
 
 
 const styles = StyleSheet.create({
@@ -357,6 +477,15 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     marginTop: 10
+  },
+  uploadImageIcon:{
+    fontSize:20,
+    height:22,
+    color: 'black'
+  },
+  editImageButton:{
+    marginRight:95,
+    marginTop:-30
   }
 
 

@@ -11,8 +11,8 @@ export default class MyDatePicker extends Component {
     }
    
   }
-test(){
-  alert('hghghg');
+changeDate(date){
+  this.props.setDate(date);
 }
   render(){
     return (
@@ -50,9 +50,11 @@ test(){
           }
           // ... You can check the source to find the other keys.
         }}
-        onDateChange={(date) => {this.setState({date: date});
-        //this.props.setDate(date);
-      }}
+        onDateChange={
+          (date) => {
+            this.setState({date: date});
+            this.changeDate(date);
+          }}
       />
     )
   }
