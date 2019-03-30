@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {
     ActivityIndicator,
-    Dimensions,
     Button,
     Clipboard,
     Image,
@@ -11,19 +10,34 @@ import {
     Text,
     TouchableOpacity,
     View,
+    Dimensions
 } from 'react-native';
 import { Constants, ImagePicker, Permissions } from 'expo';
 import Icon from "react-native-vector-icons/AntDesign";
 import Icon1 from "react-native-vector-icons/Ionicons";
 import ActionButton from 'react-native-action-button';
 
-const MalePicture = require('../../Images/MaleAvatar.png');
-const FemalePicture =  require('../../Images/FemaleAvatar.png');
-const IMAGE_SIZE = SCREEN_WIDTH - 250;
 const SCREEN_WIDTH = Dimensions.get('window').width;
-export default class ImagePickerComponent extends Component {
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+
+const IMAGE_SIZE = SCREEN_WIDTH - 250;
+const MalePicture = require('../../Images/MaleAvatar.png');
+const FemalePicture = require('../../Images/FemaleAvatar.png');
+
+
+export default class ImageUpload extends Component {
+
+    // constructor() {
+    //     super();
+    
+    //     this.state = {
+    //         image: null,
+    //         uploading: false,    
+    //     };
+    //   }
+
     state = {
-        image: MalePicture,
+        image: null,
         uploading: false,
     };
 
@@ -33,15 +47,14 @@ export default class ImagePickerComponent extends Component {
         } = this.state;
 
         return (
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                {/* <StatusBar barStyle="default" /> */}
+            <View style={styles.container}>
                 <Image
-                  source={this.props.gender == 'Male' ? MalePicture : FemalePicture}
-                  style={{
-                    width: IMAGE_SIZE,
-                    height: IMAGE_SIZE,
-                    borderRadius: 10,
-                  }}
+                    source={ this.state.image ? {uri:image} : MalePicture}
+                    style={{
+                        width: IMAGE_SIZE,
+                        height: IMAGE_SIZE,
+                        borderRadius: 10,
+                    }}
                 />
                 <ActionButton style={styles.editImageButton}
                     renderIcon={active => active ? (<Icon1
@@ -63,7 +76,8 @@ export default class ImagePickerComponent extends Component {
 
                     <ActionButton.Item
                         buttonColor='white'
-                    >
+                        onPress={this._pickImage}
+                        >
                         <Icon
                             name="upload"
                             size={15}
@@ -72,6 +86,7 @@ export default class ImagePickerComponent extends Component {
                     </ActionButton.Item>
                     <ActionButton.Item
                         buttonColor='white'
+                        onPress={this._takePhoto}
                     >
                         <Icon
                             name="camera"
@@ -81,70 +96,49 @@ export default class ImagePickerComponent extends Component {
                     </ActionButton.Item>
                 </ActionButton>
 
-
-                {/* <Text
-          style={styles.exampleText}>
-          Example: Upload ImagePicker result
-        </Text>
-
-        <Button
-          onPress={this._pickImage}
-          title="Pick an image from camera roll"
-        />
-
-        <Button onPress={this._takePhoto} title="Take a photo" /> */}
-
+{/* 
                 {this._maybeRenderImage()}
-                {this._maybeRenderUploadingOverlay()}
+                {this._maybeRenderUploadingOverlay()} */}
             </View>
         );
     }
 
-    _maybeRenderUploadingOverlay = () => {
-        if (this.state.uploading) {
-            return (
-                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                    <Image
-                        source={this.props.navigation.getParam('gender') == 'Male' ? MalePicture : FemalePicture}
-                        style={{
-                            width: IMAGE_SIZE,
-                            height: IMAGE_SIZE,
-                            borderRadius: 10,
-                        }}
-                    />
+    // _maybeRenderUploadingOverlay = () => {
+    //     if (this.state.uploading) {
+    //         return (
+    //             <View
+    //                 style={[StyleSheet.absoluteFill, styles.maybeRenderUploading]}>
+    //                 <ActivityIndicator color="#fff" size="large" />
+    //             </View>
+    //         );
+    //     }
+    // };
 
-                </View>
-            );
-        }
-    };
+    // _maybeRenderImage = () => {
+    //     let {
+    //         image
+    //     } = this.state;
 
-    _maybeRenderImage = () => {
-        let {
-            image
-        } = this.state;
+    //     if (!this.state.image) {
+    //         return;
+    //     }
 
-        if (!image) {
-            return;
-        }
+    //     return (
+    //         <View
+    //             style={styles.maybeRenderContainer}>
+    //             <View
+    //                 style={styles.maybeRenderImageContainer}>
+    //                 <Image source={{ uri: image }} style={styles.maybeRenderImage} />
+    //             </View>
 
-        return (
-            <View
-                style={styles.maybeRenderContainer}>
-                <View
-                    style={styles.maybeRenderImageContainer}>
-                    <Image source={{ uri: image }} style={styles.maybeRenderImage} />
-                </View>
-
-                <Text
-                    onPress={this._copyToClipboard}
-                    onLongPress={this._share}
-                    style={styles.maybeRenderImageText}>
-                    {image}
-                </Text>
-            </View>
-
-        );
-    };
+    //             <Text
+    //                 onPress={this._copyToClipboard}
+    //                 onLongPress={this._share}
+    //                 style={styles.maybeRenderImageText}>
+    //                 {image}
+    //             </Text>
+    //         </View>
+    //     )};
 
     _share = () => {
         Share.share({
@@ -154,13 +148,11 @@ export default class ImagePickerComponent extends Component {
         });
     };
 
-    //   _copyToClipboard = () => {
-    //     Clipboard.setString(this.state.image);
-    //     alert('Copied image URL to clipboard');
-    //   };
+    _copyToClipboard = () => {
+        Clipboard.setString(this.state.image);
+        alert('Copied image URL to clipboard');
+    };
 
-
-    //function to take picture with camera
     _takePhoto = async () => {
         const {
             status: cameraPerm
@@ -181,7 +173,6 @@ export default class ImagePickerComponent extends Component {
         }
     };
 
-    // function to choose img from your phone
     _pickImage = async () => {
         const {
             status: cameraRollPerm
@@ -198,7 +189,6 @@ export default class ImagePickerComponent extends Component {
         }
     };
 
-
     _handleImagePicked = async pickerResult => {
         let uploadResponse, uploadResult;
 
@@ -214,6 +204,7 @@ export default class ImagePickerComponent extends Component {
                 this.setState({
                     image: uploadResult.location
                 });
+                console.warn(uploadResult.location);
             }
         } catch (e) {
             console.log({ uploadResponse });
@@ -228,8 +219,6 @@ export default class ImagePickerComponent extends Component {
     };
 }
 
-
-//upload to DB
 async function uploadImageAsync(uri) {
     let apiUrl = 'http://proj.ruppin.ac.il/bgroup79/test1/tar6/uploadpicture';
 
@@ -263,6 +252,7 @@ async function uploadImageAsync(uri) {
 
     return fetch(apiUrl, options);
 }
+
 
 
 

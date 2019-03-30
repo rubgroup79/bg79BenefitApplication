@@ -10,16 +10,24 @@ import {
   Dimensions,
   StatusBar,
   TouchableOpacity,
+  ActivityIndicator,
+  Clipboard,
+  Share
+
 } from 'react-native';
 import { Button, Input, Slider } from 'react-native-elements';
 import { Font } from 'expo';
 import GenderButton from '../../Components/genderButton';
+import NumericInput from 'react-native-numeric-input';
+
+import { Constants, ImagePicker, Permissions } from 'expo';
+
 //import UserTypeItem from '../../Components/userTypeItem';
 import Icon from "react-native-vector-icons/AntDesign";
 import Icon1 from "react-native-vector-icons/Ionicons";
 import ActionButton from 'react-native-action-button';
 
-import ImagePickerComponent from '../../Components/ImagePicker';
+import ImageUpload from '../../Components/ImagePicker';
 
 const MALE_AVATAR = require('../../../Images/MaleAvatar.png');
 const FEMALE_AVATAR = require('../../../Images/FemaleAvatar.png');
@@ -99,10 +107,11 @@ export default class SigninTrainee extends Component {
       picture: '',
       partnerGender: '',
       trainerGender: '',
-      minPartnerAge: 0,
-      maxPartnerAge: 0,
+      minPartnerAge: 18,
+      maxPartnerAge: 30,
       minBudget: 0,
       maxBudget: 0,
+      value:0
 
     };
 
@@ -210,6 +219,26 @@ export default class SigninTrainee extends Component {
   setSelectedType = selectedType =>
     LayoutAnimation.easeInEaseOut() || this.setState({ selectedType });
 
+  // //choose image from camera roll
+  //     _pickImage = async () => {
+  //       const {
+  //         status: cameraRollPerm
+  //       } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+
+  //       // only if user allows permission to camera roll
+  //       if (cameraRollPerm === 'granted') {
+  //         let pickerResult = await ImagePicker.launchImageLibraryAsync({
+  //           allowsEditing: true,
+  //           aspect: [4, 3],
+  //         });
+
+  //         this._handleImagePicked(pickerResult);
+  //       }
+  //     };
+
+
+
+
   render() {
     return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -221,8 +250,9 @@ export default class SigninTrainee extends Component {
               <Text style={styles.nameHeader}>{this.state.firstName + ' ' + this.state.lastName}</Text>
             </View>
             <ScrollView style={{ flex: 1 }}>
-           
-              <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <View><ImageUpload gender={'Male'}></ImageUpload></View>
+
+              {/* <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                 <Image
                   source={this.props.navigation.getParam('gender') == 'Male' ? MalePicture : FemalePicture}
                   style={{
@@ -251,6 +281,7 @@ export default class SigninTrainee extends Component {
                 
                 <ActionButton.Item
                 buttonColor= 'white'
+            
                 >
                     <Icon
                       name="upload"
@@ -268,7 +299,7 @@ export default class SigninTrainee extends Component {
                     />
                 </ActionButton.Item>
                 </ActionButton> 
-            </View> 
+            </View>  */}
 
 
               <Text
@@ -292,7 +323,7 @@ export default class SigninTrainee extends Component {
                 <Text style={style = styles.sliderRangeText}>30</Text>
 
               </View>
-              <Text style={{ color: 'white', textAlign: 'center', fontSize: 15, fontWeight: 'bold' }}>Radius: {this.state.searchRadius}</Text>
+              <Text style={{ color: 'white', textAlign: 'center', fontSize: 15, fontWeight: 'bold' }}>Radius: {this.state.searchRadius} km</Text>
 
               <View style={styles.partnerPreferencesStyle}>
                 <Text style={style = styles.partnersGenderHeadline}>
@@ -335,6 +366,42 @@ export default class SigninTrainee extends Component {
                 </View>
 
               </View>
+
+              <View style={{flex:1, flexDirection:'row', justifyContent:'center'}}>
+              <Text style={style = styles.partnersAgeHeadline}>
+                  Partner's Age Range
+                    </Text>
+
+                  <NumericInput 
+              style={styles.numericInput}
+              value={this.state.minPartnerAge} 
+              onChange={value => this.setState({minPartnerAge:value})} 
+              type='up-down'
+              initValue={this.state.minPartnerAge}
+              totalWidth={100}
+              textColor='white'
+              minValue={18}
+              maxValue={this.state.maxPartnerAge}
+              rounded
+              />
+              <Text style={{flex:1, color:'white'}}>---</Text>
+                    <NumericInput 
+              style={styles.numericInput}
+              value={this.state.maxPartnerAge} 
+              onChange={value => this.setState({maxPartnerAge:value})} 
+              type='up-down'
+              initValue={this.state.maxPartnerAge}
+              totalWidth={100}
+              textColor='white'
+              minValue={this.state.minPartnerAge}
+              maxValue={100}
+              rounded
+              />
+              </View>
+            
+
+
+
 
               <Button
                 containerStyle={{ marginVertical: 20 }}
@@ -423,6 +490,8 @@ const styles = StyleSheet.create({
     width: SLIDER_SIZE,
     marginTop: 25,
   },
+
+
   sliderContainerStyle: {
     flex: 1,
     alignItems: 'center',
@@ -466,6 +535,15 @@ const styles = StyleSheet.create({
     marginTop: 30
   },
 
+  partnersAgeHeadline:{
+    flex: 2,
+    fontSize: 15,
+    color: 'rgba(216, 121, 112, 1)',
+    fontFamily: 'regular',
+    marginLeft: 40,
+    marginTop: 0
+  },
+
   userTypesContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -478,14 +556,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 10
   },
-  uploadImageIcon:{
-    fontSize:20,
-    height:22,
+  uploadImageIcon: {
+    fontSize: 20,
+    height: 22,
     color: 'black'
   },
-  editImageButton:{
-    marginRight:95,
-    marginTop:-30
+  editImageButton: {
+    marginRight: 95,
+    marginTop: -30
+  },
+  numericInput:{
+    flex:1,
+
+
   }
 
 
