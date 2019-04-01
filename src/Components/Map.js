@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         fontSize: 40,
         marginTop:-14,
-        width:SCREEN_WIDTH,
+        width:SCREEN_WIDTH+20,
   
     },
 

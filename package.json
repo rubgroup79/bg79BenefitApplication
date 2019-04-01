@@ -6,6 +6,8 @@
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "dependencies": {
+    "D":"^1.0.0",
+    "exp":"^57.2.1",
     "@expo/vector-icons": "^9.0.0",
     "@ptomasroos/react-native-multi-slider": "^1.0.0",
     "expo": "^32.0.0",
@@ -38,6 +40,7 @@
   },
   "devDependencies": {
     "babel-preset-expo": "^5.0.0",
+    "exp": "^57.2.1",
     "prettier": "^1.15.3"
   }
 }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StackNavigator } from 'react-navigation';
-
+import {Permissions, Notifications} from 'expo';
 import {
   StyleSheet,
   View,
@@ -22,6 +22,9 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 const BG_IMAGE = require('../../../assets/images/bg_screen4.jpg');
+
+var tokenTest="";
+
 
 // Enable LayoutAnimation on Android
 UIManager.setLayoutAnimationEnabledExperimental &&
@@ -78,13 +81,14 @@ export default class Login extends Component {
     }
 
     const token = await Notifications.getExpoPushTokenAsync();
-    console.warn(token);
-
     this.subscription = Notifications.addListener(this.handleNotification);
-
+    
     this.setState({
-      token,
+      token: token
     });
+
+    this.updateToken(token);
+
   }
 
     async componentDidMount() {
@@ -142,9 +146,10 @@ export default class Login extends Component {
     }
 
 
-    updateToken(){
-      fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/UpdateToken?Token='+this.state.token+"&UserCode="+this.state.userCode, {
-
+    updateToken(token){
+     console.warn("the token"+ token);
+      fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/UpdateToken?Token='+token+"&UserCode="+this.state.userCode, {
+ 
         method: 'POST',
         headers: { "Content-type": "application/json; charset=UTF-8" },
         body: JSON.stringify({}),
@@ -153,10 +158,10 @@ export default class Login extends Component {
         .then(response => {
           if (response.userCode != 0) {
             this.setState({ userCode: response.UserCode, isTrainer: response.isTrainer });
-            this.registerForPushNotifications();
-            updateToken();
+            
+       
             alert("Success! User Code= " + this.state.userCode);
-           
+   
             
           }
           else
@@ -187,6 +192,7 @@ export default class Login extends Component {
             //this.props.navigation.navigate('Components', { userCode: this.state.UserCode });
             this.registerForPushNotifications();
             alert("Success! User Code= " + this.state.userCode);
+            
             this.props.navigation.navigate('HomeTrainee', { userCode: this.state.UserCode });
 
           }

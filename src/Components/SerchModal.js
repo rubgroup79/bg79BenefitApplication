@@ -3,6 +3,7 @@ import { Modal, Text, TouchableHighlight, View, Alert, StyleSheet, Dimensions, T
 import Icon from 'react-native-vector-icons/Feather';
 import { Button } from 'react-native-elements';
 import ActionButton from 'react-native-action-button';
+import { Font } from 'expo';
 
 import GenderButton from '../Components/genderButton';
 
@@ -13,27 +14,45 @@ const MALE_AVATAR = require('../../Images/MaleAvatar.png');
 const FEMALE_AVATAR = require('../../Images/FemaleAvatar.png');
 
 export default class SearchModal extends Component {
-  state = {
+  constructor(props){
+    super(props);
+  this.state = {
     modalVisible: true,
-    selectedType:''
+    selectedType:'',
+    fontLoaded:false
   };
-
+  }
   setModalVisible(visible) {
     this.setState({ modalVisible: visible });
   }
 
+  async componentDidMount() {
+    await Font.loadAsync({
+      georgia: require('../../assets/fonts/Georgia.ttf'),
+      regular: require('../../assets/fonts/Montserrat-Regular.ttf'),
+      light: require('../../assets/fonts/Montserrat-Light.ttf'),
+      bold: require('../../assets/fonts/Montserrat-Bold.ttf'),
+    });
+
+    this.setState({
+      fontLoaded: true,
+    });
+  }
+
   render() {
     return (
+      <View>
+      {this.state.fontLoaded ? (
       <View style={{ marginTop: 30 }}
-      
       >
+      
         <Modal
           animationType="fade"
           style={styles.modal}
           transparent={true}
           visible={this.state.modalVisible}
           >
-          <TouchableOpacity 
+          <View 
           
           style={styles.modal}>
 
@@ -93,8 +112,9 @@ export default class SearchModal extends Component {
                 </View>
 
               </View> */}
-          </TouchableOpacity>
-        </Modal>
+          </View>
+        </Modal> 
+      </View> ) : <View></View> }
       </View>
     );
   }
