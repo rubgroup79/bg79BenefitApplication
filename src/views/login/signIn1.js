@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import {
-  Alert,
   LayoutAnimation,
-  TouchableOpacity,
   Dimensions,
-  Image,
   UIManager,
   KeyboardAvoidingView,
   StyleSheet,
@@ -20,19 +17,17 @@ import UserTypeItem from '../../Components/userTypeItem';
 import GenderButton from '../../Components/genderButton';
 
 // Enable LayoutAnimation on Android
-UIManager.setLayoutAnimationEnabledExperimental &&
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-var MaxDate = "01-01-" + (new Date().getFullYear() - 18);
-const USER_COOL = require('../../../assets/images/user-cool.png');
-const USER_STUDENT = require('../../../assets/images/user-student.png');
-const USER_HP = require('../../../assets/images/user-hp.png');
 
 const MALE_AVATAR = require('../../../Images/MaleAvatar.png');
 const FEMALE_AVATAR = require('../../../Images/FemaleAvatar.png');
 
+const TRAINER_AVATAR = require('../../../Images/TrainerAvatar.png');
+const TRAINEE_AVATAR = require('../../../Images/TraineeAvatar.png');
+
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
+var MaxDate = "01-01-" + (new Date().getFullYear() - 18);
 
 var Categories = [
   {
@@ -82,6 +77,8 @@ var Categories = [
   },
 ]
 
+UIManager.setLayoutAnimationEnabledExperimental &&
+  UIManager.setLayoutAnimationEnabledExperimental(true);
 
 class CustomButton extends Component {
   constructor() {
@@ -108,7 +105,6 @@ class CustomButton extends Component {
     return (
       <Button
         title={title}
-
         titleStyle={{ fontSize: 15, color: 'white', fontFamily: 'regular' }}
         buttonStyle={
           selected
@@ -135,7 +131,6 @@ class CustomButton extends Component {
   }
 }
 
-
 export default class SignIn1 extends Component {
   constructor(props) {
     super(props);
@@ -159,7 +154,7 @@ export default class SignIn1 extends Component {
     };
 
     this.setSelectedType = this.setSelectedType.bind(this);
-    this.setDate= this.setDate.bind(this);  
+    this.setDate = this.setDate.bind(this);
     this.signup = this.signup.bind(this);
   }
 
@@ -182,14 +177,14 @@ export default class SignIn1 extends Component {
     const lastNameValid = this.validateLastName();
     const isGenderValid = this.validateGender();
     const isCategoriesValid = this.validateCategories();
-    
+
 
     if (
 
       firstNameValid &&
       lastNameValid &&
       isTrainerValid &&
-      isCategoriesValid&&
+      isCategoriesValid &&
       isGenderValid
 
     ) {
@@ -199,14 +194,12 @@ export default class SignIn1 extends Component {
         LayoutAnimation.easeInEaseOut();
         this.setState({ isLoading: false });
         if (this.state.isTrainer == 0)
-          this.props.navigation.navigate('SigninTrainee', {email:this.props.navigation.getParam('email', null), password:this.props.navigation.getParam('password', null), firstName:this.state.firstName,lastName:this.state.lastName, gender: this.state.gender, dateOfBirth: this.state.dateOfBirth, sportCategories: this.state.sportCategories  });
+          this.props.navigation.navigate('SigninTrainee', { email: this.props.navigation.getParam('email', null), password: this.props.navigation.getParam('password', null), firstName: this.state.firstName, lastName: this.state.lastName, gender: this.state.gender, dateOfBirth: this.state.dateOfBirth, sportCategories: this.state.sportCategories });
         else {
           alert('אלירן סבג למה ככה חזק');
           console.warn(this.state);
         }
       }, 1500);
-
-
     }
   }
 
@@ -216,7 +209,7 @@ export default class SignIn1 extends Component {
 
   setDate(date) {
     this.setState({ dateOfBirth: date });
-    
+
   }
 
   validateFirstName() {
@@ -245,7 +238,7 @@ export default class SignIn1 extends Component {
     else return true;
 
   }
-  validateGender(){
+  validateGender() {
     if (this.state.gender == null) {
       alert('Please choose your gender');
       return false;
@@ -286,7 +279,7 @@ export default class SignIn1 extends Component {
   setSelectedType = selectedType =>
     LayoutAnimation.easeInEaseOut() || this.setState({ selectedType });
 
-    setSelectedGender = selectedGender =>
+  setSelectedGender = selectedGender =>
     LayoutAnimation.easeInEaseOut() || this.setState({ selectedGender });
 
   render() {
@@ -303,16 +296,19 @@ export default class SignIn1 extends Component {
 
     return !fontLoaded ? (
       <Text> Loading... </Text>
+
     ) : (
         <ScrollView
           //scrollEnabled={true}
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={styles.container}
         >
+
           <KeyboardAvoidingView
             behavior="position"
             contentContainerStyle={styles.formContainer}
           >
+
             <ScrollView style={{
               flex: 1,
               paddingBottom: 20,
@@ -323,33 +319,43 @@ export default class SignIn1 extends Component {
               textAlign: 'center',
               alignContent: "center"
             }}>
+
               <View style={{ flex: 1, alignContent: 'center', justifyContent: 'center', textAlign: 'center' }}>
+
                 <Text style={styles.signUpText}>Sign up</Text>
+
                 <Text style={styles.whoAreYouText}>WHO YOU ARE ?</Text>
+
               </View>
+
               <View style={styles.userTypesContainer}>
+
                 <UserTypeItem
                   label="Trainee"
                   labelColor="#ECC841"
-                  image={USER_COOL}
+                  image={TRAINEE_AVATAR}
                   onPress={() => {
                     this.setSelectedType('Trainee');
                     this.setState({ isTrainer: 0 });
                   }}
                   selected={selectedType === 'Trainee'}
                 />
+
                 <UserTypeItem
                   label="Trainer"
                   labelColor="#2CA75E"
-                  image={USER_STUDENT}
+                  image={TRAINER_AVATAR}
                   onPress={() => {
                     this.setSelectedType('Trainer');
                     this.setState({ isTrainer: 1 });
                   }}
                   selected={selectedType === 'Trainer'}
                 />
+
               </View>
+
               <View style={styles.viewContainer}>
+
                 <FormInput style={{ flex: 1 }}
                   refInput={input => (this.firstNameInput = input)}
                   icon="user"
@@ -365,6 +371,7 @@ export default class SignIn1 extends Component {
                     this.lastNameInput.focus();
                   }}
                 />
+
                 <FormInput style={{ flex: 1 }}
                   refInput={input => (this.lastNameInput = input)}
                   icon="user"
@@ -382,61 +389,73 @@ export default class SignIn1 extends Component {
                 />
 
                 <View style={styles.partnerPreferencesStyle}>
+
                   <Text style={style = styles.genderHeadline}>
                     Gender
                     </Text>
+
                   <View style={styles.partnerPreferencesContainerStyle} >
 
                     <View style={styles.genderContainer}>
+
                       <GenderButton
                         image={MALE_AVATAR}
                         onPress={
-                        () => {this.setSelectedGender('Male')
-                          this.setState({gender:'Male'})
-                        
-                        }}
-
+                          () => {
+                            this.setSelectedGender('Male')
+                            this.setState({ gender: 'Male' })
+                          }}
                         selected={selectedGender === 'Male'}
                       />
+
                       <GenderButton
                         image={FEMALE_AVATAR}
                         onPress={
-                          () => {this.setSelectedGender('Female')
-                            this.setState({gender:'Female'})
-                          
+                          () => {
+                            this.setSelectedGender('Female')
+                            this.setState({ gender: 'Female' })
                           }}
                         selected={selectedGender === 'Female'}
                       />
 
                     </View>
+
                   </View>
 
                 </View>
 
 
+
                 <View style={{ flex: 1, flexDirection: 'row', }}>
+
                   <Text style={styles.dateOfBirthLabel}>
                     Date of Birth
-              </Text>
+                  </Text>
+
                   <MyDatePicker
                     style={{ flex: 1 }}
                     setDate={this.setDate}
                   ></MyDatePicker>
+
                 </View>
 
 
                 <View style={{ flex: 1 }}>
+
                   <Text
                     style={styles.textHeadlines}
                   >
                     Favorite Sport Types
                 </Text>
+
                   <View style={{ flex: 1, width: SCREEN_WIDTH, marginTop: 20, }}>
+
                     <ScrollView
                       style={{ flex: 1 }}
                       horizontal
                       showsHorizontalScrollIndicator={false}
                     >
+
                       <View
                         style={{
                           flex: 1,
@@ -446,27 +465,40 @@ export default class SignIn1 extends Component {
                           marginRight: 10,
                         }}
                       >
+
                         <View style={{ flex: 1, flexDirection: 'row' }}>
+
                           <CustomButton title="Short Run" setCategories={this.setCategories} />
                           <CustomButton title="Yoga" setCategories={this.setCategories} />
                           <CustomButton title="Jogging" setCategories={this.setCategories} />
+
                         </View>
+
                         <View style={{ flex: 1, flexDirection: 'row' }}>
+
                           <CustomButton title="Long Run" setCategories={this.setCategories} />
                           <CustomButton title="Walking" setCategories={this.setCategories} />
                           <CustomButton title="Functional" setCategories={this.setCategories} />
+
                         </View>
                         <View style={{ flex: 1, flexDirection: 'row' }}>
+
                           <CustomButton title="Pilatis" setCategories={this.setCategories} />
                           <CustomButton title="Strength" setCategories={this.setCategories} />
                           <CustomButton title="TRX" setCategories={this.setCategories} />
+
                         </View>
 
                       </View>
+
                     </ScrollView>
+
                   </View>
+
                 </View>
+
               </View>
+
               <Button
                 containerStyle={{ marginVertical: 20 }}
                 style={{
@@ -497,9 +529,13 @@ export default class SignIn1 extends Component {
                 onPress={() => this.signup()}
                 activeOpacity={0.5}
               />
+
             </ScrollView>
+
           </KeyboardAvoidingView>
+
         </ScrollView>
+
       );
   }
 }
@@ -524,7 +560,10 @@ export const FormInput = props => {
   );
 };
 
+
+
 const styles = StyleSheet.create({
+  
   container: {
     flex: 1,
     paddingBottom: 20,
@@ -535,11 +574,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-around',
   },
+
   formContainer: {
     flex: 1,
     justifyContent: 'space-around',
     alignItems: 'center',
   },
+
   signUpText: {
     flex: 1,
     color: 'white',
@@ -548,6 +589,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     textAlign: 'center',
   },
+
   whoAreYouText: {
     flex: 1,
     color: '#7384B4',
@@ -556,6 +598,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     textAlign: 'center',
   },
+
   userTypesContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -563,28 +606,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 30,
   },
-  // userTypeItemContainer: {
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  //   opacity: 0.5,
-  // },
-  // userTypeItemContainerSelected: {
-  //   opacity: 1,
-  // },
-  // userTypeMugshot: {
-  //   margin: 4,
-  //   height: 70,
-  //   width: 70,
-  // },
-  // userTypeMugshotSelected: {
-  //   height: 100,
-  //   width: 100,
-  // },
-  // userTypeLabel: {
-  //   color: 'yellow',
-  //   fontFamily: 'bold',
-  //   fontSize: 11,
-  // },
+
   inputContainer: {
     paddingLeft: 8,
     borderRadius: 40,
@@ -593,6 +615,7 @@ const styles = StyleSheet.create({
     height: 45,
     marginVertical: 10,
   },
+
   inputStyle: {
     flex: 1,
     marginLeft: 10,
@@ -600,29 +623,35 @@ const styles = StyleSheet.create({
     fontFamily: 'light',
     fontSize: 16,
   },
+
   errorInputStyle: {
     marginTop: 0,
     textAlign: 'center',
     color: '#F44336',
   },
+  
   signUpButtonText: {
     fontFamily: 'bold',
     fontSize: 13,
   },
+
   signUpButton: {
     width: 250,
     borderRadius: 50,
     height: 45,
   },
+
   loginHereContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+
   alreadyAccountText: {
     fontFamily: 'lightitalic',
     fontSize: 12,
     color: 'white',
   },
+
   loginHereText: {
     color: '#FF9800',
     fontFamily: 'lightitalic',
@@ -639,6 +668,7 @@ const styles = StyleSheet.create({
     width: '80%',
     margin: 35,
   },
+
   dateOfBirthLabel: {
     marginTop: 9,
     color: 'rgba(216, 121, 112, 1)',
@@ -648,6 +678,7 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center'
   },
+
   textHeadlines: {
     flex: 1,
     fontSize: 15,
@@ -665,6 +696,7 @@ const styles = StyleSheet.create({
     marginLeft: 40,
     marginTop: 30
   },
+  
   genderHeadline: {
     flex: 1,
     fontSize: 15,
@@ -673,29 +705,27 @@ const styles = StyleSheet.create({
     marginTop: 30
   },
 
- genderContainer: {
+  genderContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     width: SCREEN_WIDTH,
     alignItems: 'center',
     marginTop: -18,
   },
+
   partnerPreferencesStyle: {
     flex: 1,
     flexDirection: 'row',
     marginTop: 10
   },
+  
   partnerPreferencesContainerStyle: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'space-around',
     margin: 10,
-    //alignItems: 'center',
     flexDirection: 'row',
     marginRight: 40
-
   },
-
-
 
 });

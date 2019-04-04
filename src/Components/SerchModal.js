@@ -5,7 +5,7 @@ import { Button } from 'react-native-elements';
 import ActionButton from 'react-native-action-button';
 import { Font } from 'expo';
 
-import GenderButton from '../Components/genderButton';
+import GenderButton from './genderButton';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;

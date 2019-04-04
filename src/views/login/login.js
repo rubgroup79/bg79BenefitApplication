@@ -206,6 +206,7 @@ export default class Login extends Component {
     signUp() {
       const { email, password, passwordConfirmation } = this.state;
       this.setState({ isLoading: true });
+      
       // Simulate an API call
       setTimeout(() => {
         LayoutAnimation.easeInEaseOut();
@@ -229,7 +230,7 @@ export default class Login extends Component {
           if (response) {
             alert('Email already exists!');
           }
-          else this.props.navigation.navigate('SignIn1', { email: this.state.email, password: this.state.password });
+          else if (isEmailValid) this.props.navigation.navigate('SignIn1', { email: this.state.email, password: this.state.password });
         })
 
         .catch(error => console.warn('Error:', error.message));

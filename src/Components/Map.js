@@ -67,7 +67,7 @@ export default class LocationPage extends React.Component {
                 description='here i am'
               //image={require('../assets/icon.png')}
               />
-              {this.props.coupleResults == null ? alert('no results') : this.props.coupleResults.map(data => (
+              {(this.props.coupleResults.length==0 && this.props.searchMode==true ) ? alert('no results') : this.props.coupleResults.map(data => (
                 <Marker
                   coordinate={{
                     latitude: data.Latitude,
@@ -79,7 +79,7 @@ export default class LocationPage extends React.Component {
                 />
               )
               )}
-              {this.props.groupResults == null ?alert('no results') : this.props.groupResults.map(data => (
+              {(this.props.groupResults.length==0 && this.props.searchMode==true) ? alert('no results') : this.props.groupResults.map(data => (
                 <Marker
                   coordinate={{
                     latitude: data.Latitude,

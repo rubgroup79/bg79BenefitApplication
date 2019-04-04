@@ -1,35 +1,72 @@
 import React, { Component } from 'react';
-import { Modal, Text, TouchableHighlight, View, Alert, Switch, StyleSheet, ScrollView, Dimensions } from 'react-native';
-import SearchModal from '../Components/SerchModal';
+import { Text, View, Switch, StyleSheet, Dimensions, LayoutAnimation, ActivityIndicator, ScrollView } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import { Avatar, Badge, Icon, withBadge } from 'react-native-elements'
+import { Avatar, Badge, Divider } from 'react-native-elements';
 import Map from '../Components/Map';
 import GenderButton from '../Components/genderButton';
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const SCREEN_HEIGHT = Dimensions.get('window').height;
 import { Font } from 'expo';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import ActionButton from 'react-native-action-button';
+import Icon1 from 'react-native-vector-icons/Feather';
+import TimePickerNew from '../Components/TimePicker';
 
+const SCREEN_WIDTH = Dimensions.get('window').width;
 const MALE_AVATAR = require('../../Images/MaleAvatar.png');
-const FEMALE_AVATAR = require('../../Images/FemaleAvatar.png');
-export default class HomeTrainee extends Component {
-  state = {
-    isSwitchOn: false,
-    searchMode: false,
-    latitude: 0,
-    longitude: 0,
-    coupleResults: [],
-    groupResults: [],
-    status: 0,
-    fontLoaded: false
-  };
+const FEMALE_AVATAR = require('../../Images/FemaleAvatar.png'); 3
+const APPROVED_REQUESTS = require('../../Images/ApprovedRequests.png');
+const PENDING_REQUESTS = require('../../Images/PendingRequests.png');
+const FUTURE_TRAININGS = require('../../Images/FutureTrainings.png');
+var searchMode = false;
 
+export default class HomeTrainee extends Component {
+  constructor(props) {
+
+    super(props);
+
+    this.state = {
+      status: 0,
+      fontLoaded: false,
+      isSwitchOn: false,
+      isDateTimePickerVisible: false,
+      latitude: 0,
+      longitude: 0,
+      withTrainer: false,
+      withPartner: false,
+      groupWithTrainer: false,
+      groupWithPartners: false,
+      startTime: '10:00',
+      endTime: '10:00',
+      //startTime: (moment(new Date()).format('YYYY-MM-DD HH:mm:ss')),
+      //endTime: (moment(new Date()).format('YYYY-MM-DD HH:mm:ss')),
+      coupleResults: [],
+      groupResults: [],
+    };
+
+    this.onConfirmStartTime = this.onConfirmStartTime.bind(this);
+  }
+
+  boolToInt(b) {
+    if (b == true)
+      return 1;
+    else return 0;
+  }
+
+  onConfirmStartTime = (hour, minute) => {
+    this.setState({ startTime: hour + ':' + minute })
+  }
+
+  onConfirmEndTime = (hour, minute) => {
+    this.setState({ endTime: hour + ':' + minute })
+  }
 
   switchChange() {
     this.setState({ isSwitchOn: !this.state.isSwitchOn })
     console.warn('hi');
   }
 
-
+  returnFunction() {
+    console.warn('testtest')
+  }
 
   async componentDidMount() {
     await Font.loadAsync({
@@ -45,10 +82,20 @@ export default class HomeTrainee extends Component {
   }
 
   UNSAFE_componentWillMount() {
-    //Code = this.props.navigation.getParam('UserCode', 0);
-    //() => this.setState({ UserCode: Code });
     this.getCurrentLocation();
   }
+
+  setPartnerTraining = () =>
+    LayoutAnimation.easeInEaseOut() || this.setState({ withPartner: !this.state.withTrainer });
+
+  setTrainerTraining = () =>
+    LayoutAnimation.easeInEaseOut() || this.setState({ withTrainer: !this.state.withTrainer });
+
+  setPartnersGroupTraining = () =>
+    LayoutAnimation.easeInEaseOut() || this.setState({ groupWithPartners: !this.state.groupWithPartners });
+
+  setTrainerGroupTraining = () =>
+    LayoutAnimation.easeInEaseOut() || this.setState({ groupWithTrainer: !this.state.groupWithTrainer });
 
   getCurrentLocation = () => {
     navigator.geolocation.getCurrentPosition(
@@ -61,64 +108,101 @@ export default class HomeTrainee extends Component {
           '\nspeed=' + position.coords.speed;
 
         this.setState({ latitude: position.coords.latitude, longitude: position.coords.longitude, status: 1 });// +  Math.random()/1000,
-
       },
       (error) => alert(error.message),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-
     );
   };
+
+  search() {
+    if (this.state.startTime < this.state.endTime) {
+      searchMode = true;
+      var OnlineDetails = {
+        UserCode: this.props.navigation.getParam('userCode', '0'),
+        Latitude: this.state.latitude,
+        Longitude: this.state.longitude,
+        StartTime: this.state.startTime,
+        EndTime: this.state.endTime,
+        WithTrainer: this.boolToInt(this.state.withTrainer),
+        WithPartner: this.boolToInt(this.state.withPartner),
+        GroupWithTrainer: this.boolToInt(this.state.groupWithTrainer),
+        GroupWithPartners: this.boolToInt(this.state.groupWithPartners),
+      };
+      console.warn('online ' + OnlineDetails);
+      fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/InsertOnlineTrainee', {
+        method: 'POST',
+        headers: { "Content-type": "application/json; charset=UTF-8" },
+        body: JSON.stringify(OnlineDetails),
+      })
+        .then(res => res.json())
+        .then(response => {
+          this.setState({ coupleResults: response });
+        })
+
+        .catch(error => console.warn('Error:', error.message));
+
+      if (this.state.groupWithTrainer || this.state.groupWithPartners) {
+        fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/SearchGroups', {
+
+          method: 'POST',
+          headers: { "Content-type": "application/json; charset=UTF-8" },
+          body: JSON.stringify(OnlineDetails),
+        })
+          .then(res => res.json())
+          .then(response => {
+            this.setState({ groupResults: response });
+          })
+
+          .catch(error => console.warn('Error:', error.message));
+      }
+
+    }
+    else { alert('change the time') };
+
+    console.warn(this.state);
+  }
+
   render() {
     return (
       <View style={{ flex: 1, flexDirection: 'column', width: SCREEN_WIDTH }}>
-        {this.state.fontLoaded ?
-          <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', }} >
 
+        {this.state.fontLoaded ?
+
+          <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', }} >
             <View style={styles.container}>
+
               <Switch
                 trackColor={{ true: 'rgba(213, 100, 140, 1)' }}
                 style={styles.switch}
                 onValueChange={() => this.setState({ isSwitchOn: !this.state.isSwitchOn })}
                 value={this.state.isSwitchOn}
               />
+
               <View style={{ flex: 1, marginLeft: 45 }}>
+
                 <Avatar
                   rounded
-                  source={{
-                    uri: 'https://randomuser.me/api/portraits/men/41.jpg',
-                  }}
-                  size="medium"
-                />
-                <Badge
-                  status="error"
-                  containerStyle={{ position: 'absolute', top: -3, right: 35 }}
-                  value='8'
-                />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Avatar
-                  rounded
-                  source={{
-                    uri: 'https://randomuser.me/api/portraits/men/41.jpg',
-                  }}
+                  source={
+                    PENDING_REQUESTS
+                  }
                   size="medium"
                 />
 
                 <Badge
-                  status="success"
+                  status="warning"
                   containerStyle={{ position: 'absolute', top: -3, right: 35 }}
                   value='8'
                 />
+
               </View>
 
-
-
               <View style={{ flex: 1 }}>
+
                 <Avatar
                   rounded
-                  source={{
-                    uri: 'https://randomuser.me/api/portraits/men/41.jpg',
-                  }}
+                  source={
+                    APPROVED_REQUESTS
+                  }
                   size="medium"
                 />
 
@@ -127,67 +211,148 @@ export default class HomeTrainee extends Component {
                   containerStyle={{ position: 'absolute', top: -3, right: 35 }}
                   value='8'
                 />
+
               </View>
+
+              <View style={{ flex: 1 }}>
+
+                <Avatar
+                  rounded
+                  source={
+                    FUTURE_TRAININGS
+                  }
+                  size="medium"
+                />
+
+                <Badge
+                  status="success"
+                  containerStyle={{ position: 'absolute', top: -3, right: 35 }}
+                  value='8'
+                />
+
+              </View>
+
+            </View>
+
+            <View >
+
+              <Divider style={styles.dividerStyle}></Divider>
 
             </View>
 
 
             {this.state.isSwitchOn ?
-              <View style={{ flex: 4, flexDirection: 'column', marginBottom: 15 }}>
+              <View style={{ flex: 4, flexDirection: 'column', marginBottom: 15, marginTop: 10 }}>
 
-                <View style={styles.partnerPreferencesStyle}>
-                  <Text style={style = styles.partnersGenderHeadline}>
+                <View style={styles.trainingsPreferencesStyle}>
+
+                  <Text style={style = styles.trainingsHeadline}>
                     Looking for
                     </Text>
-                  <View style={styles.partnerPreferencesContainerStyle} >
+                  {/* <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
 
+                    <Text style={{ flex: 1 }}>Couple</Text>
 
-                    <GenderButton style={styles.lookingFor}
+                    <Text style={{ flex: 1 }}>Group</Text>
+
+                  </View> */}
+                  <View style={styles.trainingsPreferencesContainerStyle} >
+
+                    <GenderButton style={{ margin: 10 }}
+                      label="Partner"
                       image={MALE_AVATAR}
                       onPress={
                         () => {
-                          this.setSelectedType('Male')
-                          this.setState({ partnerGender: 'Male' })
+                          this.setPartnerTraining();
                         }
                       }
-                      selected={this.state.selectedType === 'Male'}
+                      selected={this.state.withPartner == true}
                     />
-                    <GenderButton style={styles.lookingFor}
+
+                    <GenderButton style={{ margin: 10 }}
+                      label="Trainer"
                       image={MALE_AVATAR}
                       onPress={
                         () => {
-                          this.setSelectedType('Male')
-                          this.setState({ partnerGender: 'Male' })
+                          this.setTrainerTraining();
                         }
                       }
-                      selected={this.state.selectedType === 'Male'}
+                      selected={this.state.withTrainer == true}
                     />
-                    <GenderButton style={styles.lookingFor}
+
+                    <GenderButton style={{ margin: 10 }}
+                      label="Partners"
                       image={MALE_AVATAR}
                       onPress={
                         () => {
-                          this.setSelectedType('Male')
-                          this.setState({ partnerGender: 'Male' })
+                          this.setPartnersGroupTraining();
                         }
                       }
-                      selected={this.state.selectedType === 'Male'}
+                      selected={this.state.groupWithPartners == true}
                     />
-                    <GenderButton style={styles.lookingFor}
+
+                    <GenderButton style={{ margin: 10 }}
+                      label="Partners & Trainer"
                       image={FEMALE_AVATAR}
                       onPress={
                         () => {
-                          this.setSelectedType('Female')
-                          this.setState({ partnerGender: 'Female' })
+                          this.setTrainerGroupTraining();
                         }
                       }
-                      selected={this.state.selectedType === 'Female'}
+                      selected={this.state.groupWithTrainer == true}
                     />
 
                   </View>
+
                 </View>
-              </View> : <View></View>}
+
+                <View style={{ flex: 1, flexDirection: 'row' }}>
+                  <View style={{ flex: 4, flexDirection: 'row', marginLeft: 15 }}>
+                    <Icon
+                      size={40}
+                      color='rgba(216, 121, 112, 1)'
+                      name='clock-o'
+                    ></Icon>
+
+                    <View style={{flex:1, flexDirection:'row'}}>
+
+                      <TimePickerNew setTime={this.onConfirmStartTime} title={'From: '}></TimePickerNew>
+
+                      <TimePickerNew setTime={this.onConfirmEndTime} title={'To: '}></TimePickerNew>
+
+                    </View>
+
+                  </View >
+                  <View style={{ flex: 1, }}>
+
+                    <ActionButton
+                      buttonColor='#46db93'
+                      size={50}
+                      renderIcon={active => active ? (<Icon1
+                        name="md-create"
+                        size={60}
+                      />) :
+                        (<Icon
+                          name='search'
+                          color='white'
+                          size={20}
+                        />)
+                      }
+                      onPress={() => this.search()}
+                    ></ActionButton>
+
+                  </View>
+
+                </View>
+
+              </View>
+              :
+              <View>
+
+              </View>}
 
             <View style={{ flex: 6, }}>
+
               {this.state.status == 1 ?
                 <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center' }}>
                   <View style={{ flex: 1, position: 'absolute', zIndex: 10000, width: SCREEN_WIDTH - 30 }}>
@@ -201,8 +366,8 @@ export default class HomeTrainee extends Component {
                       returnKeyType={'search'}
                       listViewDisplayed="false"
                       styles={{
-                        listViewDisplayed:{ backgroundColor:'blue'}
-                        
+                        listViewDisplayed: { backgroundColor: 'blue' }
+
                       }
                       }
                       fetchDetails={true}
@@ -214,11 +379,9 @@ export default class HomeTrainee extends Component {
                         return ''; // text input default value
                       }}
                       query={{
-
                         key: 'AIzaSyB_OIuPsnUNvJ-CN0z2dir7cVbqJ7Xj3_Q',
                         language: 'en', // language of the results
                         //types: '(regions)', // default: 'geocode',
-
                       }}
                       styles={{
                         description: {
@@ -227,16 +390,12 @@ export default class HomeTrainee extends Component {
                         predefinedPlacesDescription: {
                           color: '#1faadb',
                         },
-
                       }}
                       enablePoweredByContainer={true}
                       currentLocation={true}
                       currentLocationLable='Current Location'
-
                       nearbyPlacesAPI="GoogleReverseGeocoding"
-
                       GooglePlacesSearchQuery={{
-
                         rankby: 'distance',
                         types: 'food',
                       }}
@@ -245,21 +404,28 @@ export default class HomeTrainee extends Component {
                         'administrative_area_level_3',
                         'street_address'
                       ]}
-
                       debounce={200}
                     />
 
-
                   </View>
 
-                  <Map style={{ zIndex: 0 }} coupleResults={this.state.coupleResults} groupResults={this.state.groupResults} longitude={this.state.longitude} latitude={this.state.latitude}></Map>
+                  <Map style={{ zIndex: 0 }} searchMode={searchMode} coupleResults={this.state.coupleResults} groupResults={this.state.groupResults} longitude={this.state.longitude} latitude={this.state.latitude}></Map>
+                </View>
+                :
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                  <ActivityIndicator style={{ flex: 1 }}
+                    size='large'
+                  ></ActivityIndicator>
+                </View>}
 
-                </View> : null}
+
             </View>
 
 
-          </View> : null}
-        {/* {this.state.isSwitchOn ? <SearchModal></SearchModal> : <View></View>} */}
+          </View>
+          :
+          null}
+
       </View>
     );
   }
@@ -267,40 +433,41 @@ export default class HomeTrainee extends Component {
 
 
 const styles = StyleSheet.create({
+
   container: {
     flex: 1,
     flexDirection: 'row',
-    //alignItems: 'center',
     marginTop: 40,
     marginLeft: 15,
     height: 15,
   },
+
   switch: {
     marginTop: 8,
   },
-  partnerPreferencesStyle: {
-    flex: 1,
+
+  trainingsPreferencesStyle: {
+    flex: 2,
     flexDirection: 'column',
-    marginTop: 40,
+    //marginTop: 10,
     justifyContent: 'center',
     alignItems: 'center'
   },
-  partnersGenderHeadline: {
+
+  trainingsHeadline: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 23,
     color: 'rgba(216, 121, 112, 1)',
     fontFamily: 'regular',
-    //marginLeft: 20,
-    //marginTop: 30
   },
-  partnerPreferencesContainerStyle: {
+
+  trainingsPreferencesContainerStyle: {
     flex: 3,
     flexDirection: 'row',
-    marginTop: -50
-    //marginRight:150
-
   },
-  lookingFor: {
-    margin: 15
+
+  dividerStyle: {
+    backgroundColor: 'gray'
   }
+
 })
