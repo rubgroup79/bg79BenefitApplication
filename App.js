@@ -88,7 +88,7 @@ const MainRoot = DrawerNavigator(
     },
   },
   {
-    initialRouteName: 'HomeTrainee',
+    initialRouteName: 'SigninTrainee',
     contentOptions: {
       activeTintColor: '#548ff7',
       activeBackgroundColor: 'transparent',

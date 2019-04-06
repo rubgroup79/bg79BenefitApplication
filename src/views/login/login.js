@@ -115,6 +115,14 @@ export default class Login extends Component {
       return re.test(email);
     }
 
+
+    validatePassword(password) {
+      if ( password == this.state.passwordConfirmation)
+          return true;
+      else return false;
+
+    }
+
     login() {
       const { email, password } = this.state;
       this.setState({ isLoading: true });
@@ -202,10 +210,10 @@ export default class Login extends Component {
           isLoading: false,
           isEmailValid: this.validateEmail(email) || this.emailInput.shake(),
           isPasswordValid: password.length >= 8 || this.passwordInput.shake(),
-          isConfirmationValid:
-            password == passwordConfirmation || this.confirmationInput.shake(),
+          isConfirmationValid: this.validatePassword(password) ||  this.confirmationInput.shake(),
         });
-      }, 1500);
+      }, 0);
+
 
       fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/CheckIfEmailExists?Email=' + this.state.email, {
         method: 'POST',
@@ -218,7 +226,8 @@ export default class Login extends Component {
           if (response) {
             alert('Email already exists!');
           }
-          else if (this.state.isEmailValid) this.props.navigation.navigate('SignIn1', { email: this.state.email, password: this.state.password });
+          else if (this.state.isEmailValid && this.state.isConfirmationValid ) this.props.navigation.navigate('SignIn1', { email: this.state.email, password: this.state.password });
+          else alert("passss");
         })
 
         .catch(error => console.warn('Error:', error.message));

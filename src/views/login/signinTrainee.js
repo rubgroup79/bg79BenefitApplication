@@ -79,30 +79,29 @@ export default class SigninTrainee extends Component {
 
     this.state = {
       fontLoaded: false,
-      selectedGenderPartner: null,
-      selectedGenderTrainer: null,
-      email: '',
-      password: '',
-      firstName: '',
-      lastName: '',
-      dateOfBirth: '',
-      sportCategories: [],
-      gender: null,
-      isTrainer: null,
+      // email: '',
+      // password: '',
+      // firstName: '',
+      // lastName: '',
+      // dateOfBirth: '',
+      // sportCategories: [],
+      // gender: null,
+      // isTrainer: null,
       searchRadius: 5,
       picture: '',
-      partnerGender: '',
-      trainerGender: '',
+      partnerGender: null,
+      trainerGender: null,
       minPartnerAge: 18,
       maxPartnerAge: 30,
       minBudget: 0,
       maxBudget: 100,
-      //value: 0,
       step: 1,
     };
 
     this.setSelectedGenderPartner = this.setSelectedGenderPartner.bind(this);
     this.setSelectedGenderTrainer = this.setSelectedGenderTrainer.bind(this);
+    this.setPicturePath = this.setPicturePath.bind(this);
+  
   }
 
   async componentDidMount() {
@@ -118,14 +117,18 @@ export default class SigninTrainee extends Component {
     });
   }
 
+  nextStep() {
+    const partnerGenderValid = this.validatePartnerGender();
+    if (partnerGenderValid)
+      this.setState({ step: 2 });
+  }
+
   submit() {
     const pictureValid = this.validatePicture();
-    const partnerGenderValid = this.validatePartnerGender();
     const trainerGenderValid = this.validateTrainerGender();
 
     if (
       pictureValid &&
-      partnerGenderValid &&
       trainerGenderValid
     ) {
       let Trainee = {
@@ -137,22 +140,17 @@ export default class SigninTrainee extends Component {
         DateOfBirth: this.props.navigation.getParam('dateOfBirth'),
         SportCategories: this.props.navigation.getParam('sportCategories'),
         IsTrainer: 0,
-        Picture: 'this.state.picture',
         SearchRadius: this.state.searchRadius,
-        MinBudget: 100,
-        MaxBudget: 200,
-        MinParntnerAge: 26,
-        MaxPartnerAge: 35,
+        MinBudget: 0,
+        MaxBudget: this.state.maxBudget,
+        MinPartnerAge: this.state.minPartnerAge,
+        MaxPartnerAge: this.state.maxPartnerAge,
         PartnerGender: this.state.partnerGender,
-        TrainerGender: 'Both',
-        // Picture: this.state.picture,
-        // MinBudget: this.state.minBudget,
-        // MaxBudget: this.state.maxBudget,
-        // MinPartnerAge: this.state.minPartnerAge,
-        // MaxPartnerAge: this.state.maxPartnerAge,
-        // TrainerGender: this.state.trainerGender,
+        TrainerGender: this.state.trainerGender,
+        Picture: this.state.picture,
       }
 
+      console.warn(Trainee);
       fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/InsertTrainee', {
         method: 'POST',
         headers: { "Content-type": "application/json; charset=UTF-8" },
@@ -164,8 +162,10 @@ export default class SigninTrainee extends Component {
           if (response == 0) {
             alert('Error');
           }
-          else alert('User Code: ' + response);
-          this.props.navigation.navigate('Login');
+          else {
+            alert('User Code: ' + response);
+            this.props.navigation.navigate('Login');
+          }
         })
 
         .catch(error => console.warn('Error:', error.message));
@@ -202,14 +202,12 @@ export default class SigninTrainee extends Component {
 
   }
 
-
-
   setSelectedGenderPartner = selectedType =>
-    LayoutAnimation.easeInEaseOut() || this.setState({ selectedGenderPartner: selectedType });
+    LayoutAnimation.easeInEaseOut() || this.setState({ partnerGender: selectedType });
 
 
   setSelectedGenderTrainer = selectedType =>
-    LayoutAnimation.easeInEaseOut() || this.setState({ selectedGenderTrainer: selectedType });
+    LayoutAnimation.easeInEaseOut() || this.setState({ trainerGender: selectedType });
 
   // //choose image from camera roll
   //     _pickImage = async () => {
@@ -228,7 +226,9 @@ export default class SigninTrainee extends Component {
   //       }
   //     };
 
-
+setPicturePath(path){
+  this.setState({picture:path});
+}
 
 
   render() {
@@ -244,7 +244,7 @@ export default class SigninTrainee extends Component {
 
             <View style={styles.navBar}>
 
-              <Text style={styles.nameHeader}>{this.state.firstName + ' ' + this.state.lastName}</Text>
+              <Text style={styles.nameHeader}>{this.props.navigation.getParam('firstName') + ' ' + this.props.navigation.getParam('lastName')}</Text>
 
             </View>
 
@@ -252,7 +252,7 @@ export default class SigninTrainee extends Component {
 
               <View>
 
-                <ImageUpload gender={'Male'}></ImageUpload>
+                <ImageUpload setPicturePath={this.setPicturePath} gender={this.props.navigation.getParam('gender')}></ImageUpload>
 
               </View>
 
@@ -363,7 +363,7 @@ export default class SigninTrainee extends Component {
                                 this.setState({ partnerGender: 'Male' })
                               }
                             }
-                            selected={this.state.selectedGenderPartner === 'Male'}
+                            selected={this.state.partnerGender === 'Male'}
                           />
 
                           <GenderButton
@@ -374,7 +374,7 @@ export default class SigninTrainee extends Component {
                                 this.setState({ partnerGender: 'Female' })
                               }
                             }
-                            selected={this.state.selectedGenderPartner === 'Female'}
+                            selected={this.state.partnerGender === 'Female'}
                           />
 
                           <GenderButton
@@ -382,10 +382,10 @@ export default class SigninTrainee extends Component {
                             onPress={
                               () => {
                                 this.setSelectedGenderPartner('Both')
-                                this.setState({ selectedGenderPartner: 'Both' })
+                                this.setState({ partnerGender: 'Both' })
                               }
                             }
-                            selected={this.state.selectedGenderPartner === 'Both'}
+                            selected={this.state.partnerGender === 'Both'}
                           />
 
                         </View>
@@ -399,7 +399,9 @@ export default class SigninTrainee extends Component {
                       <Text style={style = styles.partnersAgeHeadline}>
                         Age
                       </Text>
+
                       <View style={{ flex: 5, justifyContent: 'center', flexDirection: 'row', marginRight: 25 }}>
+
                         <NumericInput
                           style={styles.numericInput}
                           value={this.state.minPartnerAge}
@@ -428,6 +430,7 @@ export default class SigninTrainee extends Component {
                           rounded
                         />
                       </View>
+
                     </View>
 
                   </View>
@@ -437,17 +440,14 @@ export default class SigninTrainee extends Component {
                     <ActionButton
                       buttonColor='rgba(216, 121, 112, 1)'
                       size={50}
-                      renderIcon={active => active ? (<Icon1
-                        name="md-create"
-                        size={60}
-                      />) :
+                      renderIcon={active => active ? null :
                         (<Icon
                           name='chevron-right'
                           color='white'
                           size={35}
                         />)
                       }
-                      onPress={() => this.setState({ step: 2 })}
+                      onPress={() => this.nextStep()}
                     ></ActionButton>
 
                   </View>
@@ -477,7 +477,7 @@ export default class SigninTrainee extends Component {
                               this.setState({ trainerGender: 'Male' })
                             }
                           }
-                          selected={this.state.selectedGenderTrainer === 'Male'}
+                          selected={this.state.trainerGender === 'Male'}
                         />
 
                         <GenderButton
@@ -488,7 +488,7 @@ export default class SigninTrainee extends Component {
                               this.setState({ trainerGender: 'Female' })
                             }
                           }
-                          selected={this.state.selectedGenderTrainer === 'Female'}
+                          selected={this.state.trainerGender === 'Female'}
                         />
 
                         <GenderButton
@@ -499,7 +499,7 @@ export default class SigninTrainee extends Component {
                               this.setState({ trainerGender: 'Both' })
                             }
                           }
-                          selected={this.state.selectedGenderTrainer === 'Both'}
+                          selected={this.state.trainerGender === 'Both'}
                         />
 
                       </View>
@@ -541,37 +541,31 @@ export default class SigninTrainee extends Component {
 
                   </View>
 
-                  <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
+                  <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', marginTop: 60 }}>
 
-                    <View style={{ flex: 1 }}>
+                    <View style={{ flex: 1, marginRight: 170 }}>
 
                       <ActionButton
                         buttonColor='rgba(216, 121, 112, 1)'
                         size={50}
-                        renderIcon={active => active ? (<Icon1
-                          name="md-create"
-                          size={60}
-                        />) :
+                        renderIcon={active => active ? null :
                           (<Icon
                             name='chevron-left'
                             color='white'
                             size={35}
                           />)
                         }
-                        onPress={() => this.submit()}
+                        onPress={() => this.setState({ step: 1 })}
                       >
                       </ActionButton>
 
                     </View>
 
-                    <View style={{ flex: 1}}>
+                    <View style={{ flex: 1 }}>
                       <ActionButton
-                        buttonColor='rgba(216, 121, 112, 1)'
+                        buttonColor='#46db93'
                         size={50}
-                        renderIcon={active => active ? (<Icon1
-                          name="md-create"
-                          size={60}
-                        />) :
+                        renderIcon={active => active ? null :
                           (<Icon
                             name='check'
                             color='white'
@@ -580,7 +574,7 @@ export default class SigninTrainee extends Component {
                         }
                         onPress={() => this.submit()}
                       ></ActionButton>
-                      
+
                     </View>
 
                   </View>
@@ -711,7 +705,7 @@ const styles = StyleSheet.create({
   partnerPreferencesStyle: {
     flex: 1,
     flexDirection: 'row',
-    marginTop: 10
+    marginTop: 30
   },
   uploadImageIcon: {
     fontSize: 20,

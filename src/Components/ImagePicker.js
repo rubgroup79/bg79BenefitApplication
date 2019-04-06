@@ -1,43 +1,28 @@
 import React, { Component } from 'react';
 import {
-    ActivityIndicator,
-    Button,
     Clipboard,
     Image,
     Share,
-    StatusBar,
     StyleSheet,
-    Text,
-    TouchableOpacity,
     View,
     Dimensions
 } from 'react-native';
-import { Constants, ImagePicker, Permissions } from 'expo';
+import {ImagePicker, Permissions } from 'expo';
 import Icon from "react-native-vector-icons/AntDesign";
 import Icon1 from "react-native-vector-icons/Ionicons";
 import ActionButton from 'react-native-action-button';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 const IMAGE_SIZE = SCREEN_WIDTH - 250;
-const MalePicture = require('../../Images/MaleAvatar.png');
-const FemalePicture = require('../../Images/FemaleAvatar.png');
+const Male = require('../../Images/MaleAvatar.png');
+const Female = require('../../Images/FemaleAvatar.png');
 
 
 export default class ImageUpload extends Component {
 
-    // constructor() {
-    //     super();
-    
-    //     this.state = {
-    //         image: null,
-    //         uploading: false,    
-    //     };
-    //   }
-
     state = {
-        image: null,
+        image: "null",
         uploading: false,
     };
 
@@ -49,7 +34,7 @@ export default class ImageUpload extends Component {
         return (
             <View style={styles.container}>
                 <Image
-                    source={ this.state.image ? {uri:image} : MalePicture}
+                    source={this.state.image=="null"? (this.props.gender=='Male' ? Male : Female) :{uri:this.state.image}}
                     style={{
                         width: IMAGE_SIZE,
                         height: IMAGE_SIZE,
@@ -186,6 +171,7 @@ export default class ImageUpload extends Component {
             });
 
             this._handleImagePicked(pickerResult);
+            
         }
     };
 
@@ -200,11 +186,11 @@ export default class ImageUpload extends Component {
             if (!pickerResult.cancelled) {
                 uploadResponse = await uploadImageAsync(pickerResult.uri);
                 uploadResult = await uploadResponse.json();
-
+              
                 this.setState({
-                    image: uploadResult.location
+                    image: uploadResult
                 });
-                console.warn(uploadResult.location);
+           
             }
         } catch (e) {
             console.log({ uploadResponse });
@@ -215,22 +201,14 @@ export default class ImageUpload extends Component {
             this.setState({
                 uploading: false
             });
+            this.props.setPicturePath(this.state.image);
         }
     };
 }
 
 async function uploadImageAsync(uri) {
     let apiUrl = 'http://proj.ruppin.ac.il/bgroup79/test1/tar6/uploadpicture';
-
-    // Note:
-    // Uncomment this if you want to experiment with local server
-    //
-    // if (Constants.isDevice) {
-    //   apiUrl = `https://your-ngrok-subdomain.ngrok.io/upload`;
-    // } else {
-    //   apiUrl = `http://localhost:3000/upload`
-    // }
-
+   
     let uriParts = uri.split('.');
     let fileType = uriParts[uriParts.length - 1];
 
@@ -249,7 +227,7 @@ async function uploadImageAsync(uri) {
             'Content-Type': 'multipart/form-data',
         },
     };
-
+ 
     return fetch(apiUrl, options);
 }
 
