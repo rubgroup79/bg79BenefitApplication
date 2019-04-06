@@ -9,6 +9,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import ActionButton from 'react-native-action-button';
 import Icon1 from 'react-native-vector-icons/Feather';
 import TimePickerNew from '../Components/TimePicker';
+import moment from 'moment';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const MALE_AVATAR = require('../../Images/MaleAvatar.png');
@@ -16,7 +17,10 @@ const FEMALE_AVATAR = require('../../Images/FemaleAvatar.png'); 3
 const APPROVED_REQUESTS = require('../../Images/ApprovedRequests.png');
 const PENDING_REQUESTS = require('../../Images/PendingRequests.png');
 const FUTURE_TRAININGS = require('../../Images/FutureTrainings.png');
-var searchMode = false;
+var hours_now = new Date().getHours();
+var minutes_now = new Date().getMinutes();
+var timeNow = hours_now + ":" + minutes_now;
+
 
 export default class HomeTrainee extends Component {
   constructor(props) {
@@ -40,6 +44,7 @@ export default class HomeTrainee extends Component {
       //endTime: (moment(new Date()).format('YYYY-MM-DD HH:mm:ss')),
       coupleResults: [],
       groupResults: [],
+      
     };
 
     this.onConfirmStartTime = this.onConfirmStartTime.bind(this);
@@ -52,21 +57,23 @@ export default class HomeTrainee extends Component {
   }
 
   onConfirmStartTime = (hour, minute) => {
-    this.setState({ startTime: hour + ':' + minute })
+    this.state.endTimePickerDisabled= false;
+     start=hour+":"+minute;
+      this.setState({ startTime: moment(new Date()).format('YYYY-MM-DD')+" " + start +":00.000"});
+      
   }
 
   onConfirmEndTime = (hour, minute) => {
-    this.setState({ endTime: hour + ':' + minute })
+    this.state.endTimePickerDisabled= false;
+    end=hour+":"+minute;
+    this.setState({ endTime: moment(new Date()).format('YYYY-MM-DD')+" " +end+":00.000"});
   }
 
   switchChange() {
     this.setState({ isSwitchOn: !this.state.isSwitchOn })
-    console.warn('hi');
+
   }
 
-  returnFunction() {
-    console.warn('testtest')
-  }
 
   async componentDidMount() {
     await Font.loadAsync({
@@ -86,7 +93,7 @@ export default class HomeTrainee extends Component {
   }
 
   setPartnerTraining = () =>
-    LayoutAnimation.easeInEaseOut() || this.setState({ withPartner: !this.state.withTrainer });
+    LayoutAnimation.easeInEaseOut() || this.setState({ withPartner: !this.state.withPartner });
 
   setTrainerTraining = () =>
     LayoutAnimation.easeInEaseOut() || this.setState({ withTrainer: !this.state.withTrainer });
@@ -114,11 +121,39 @@ export default class HomeTrainee extends Component {
     );
   };
 
+  // setTime = () => {
+  //   let hours_now = new Date().getHours();
+  //   let minutes_now = new Date().getMinutes();
+  //   let timeNow = hours_now + ":" + minutes_now;
+  //   let dayStart = new Date();
+  //   let dayEnd = new Date();
+
+  //    if (this.state.startTime < timeNow) {
+  //     dayStart = moment(dayStart).add(1, 'day').format('YYYY-MM-DD');
+  //     dayEnd = moment(dayEnd).add(1, 'day').format('YYYY-MM-DD');
+  //   }
+
+  //   else if (this.state.endTime < timeNow) {
+  //     dayStart = moment(dayStart).add(0, 'day').format('YYYY-MM-DD');
+  //     dayEnd = moment(dayEnd).add(1, 'day').format('YYYY-MM-DD');
+  //   }
+
+  //   else {
+  //     dayStart = moment(dayStart).add(0, 'day').format('YYYY-MM-DD');
+  //     dayEnd = moment(dayEnd).add(0, 'day').format('YYYY-MM-DD');
+  //   }
+
+  //   this.setState({ startTime: (dayStart + ' ' + this.state.startTime+ ':00.000').toString() });
+  //   this.setState({ endTime: (dayEnd + ' ' + this.state.endTime + ':00.000').toString() });
+    
+  //   return true;
+  // }
+
   search() {
     if (this.state.startTime < this.state.endTime) {
-      searchMode = true;
       var OnlineDetails = {
-        UserCode: this.props.navigation.getParam('userCode', '0'),
+        UserCode: 1,
+        //UserCode: this.props.navigation.getParam('userCode', '0'),
         Latitude: this.state.latitude,
         Longitude: this.state.longitude,
         StartTime: this.state.startTime,
@@ -128,7 +163,7 @@ export default class HomeTrainee extends Component {
         GroupWithTrainer: this.boolToInt(this.state.groupWithTrainer),
         GroupWithPartners: this.boolToInt(this.state.groupWithPartners),
       };
-      console.warn('online ' + OnlineDetails);
+  
       fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/InsertOnlineTrainee', {
         method: 'POST',
         headers: { "Content-type": "application/json; charset=UTF-8" },
@@ -136,7 +171,8 @@ export default class HomeTrainee extends Component {
       })
         .then(res => res.json())
         .then(response => {
-          this.setState({ coupleResults: response });
+          if (response.length==0) alert ('no results')
+           else this.setState({ coupleResults: response });
         })
 
         .catch(error => console.warn('Error:', error.message));
@@ -157,10 +193,10 @@ export default class HomeTrainee extends Component {
       }
 
     }
-    else { alert('change the time') };
+    else alert('Start time cannot be before end time');
 
-    console.warn(this.state);
   }
+
 
   render() {
     return (
@@ -169,6 +205,7 @@ export default class HomeTrainee extends Component {
         {this.state.fontLoaded ?
 
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', }} >
+
             <View style={styles.container}>
 
               <Switch
@@ -307,14 +344,16 @@ export default class HomeTrainee extends Component {
                 </View>
 
                 <View style={{ flex: 1, flexDirection: 'row' }}>
+
                   <View style={{ flex: 4, flexDirection: 'row', marginLeft: 15 }}>
+
                     <Icon
                       size={40}
                       color='rgba(216, 121, 112, 1)'
                       name='clock-o'
                     ></Icon>
 
-                    <View style={{flex:1, flexDirection:'row'}}>
+                    <View style={{ flex: 1, flexDirection: 'row' }}>
 
                       <TimePickerNew setTime={this.onConfirmStartTime} title={'From: '}></TimePickerNew>
 
@@ -323,6 +362,7 @@ export default class HomeTrainee extends Component {
                     </View>
 
                   </View >
+                  
                   <View style={{ flex: 1, }}>
 
                     <ActionButton
@@ -409,7 +449,7 @@ export default class HomeTrainee extends Component {
 
                   </View>
 
-                  <Map style={{ zIndex: 0 }} searchMode={searchMode} coupleResults={this.state.coupleResults} groupResults={this.state.groupResults} longitude={this.state.longitude} latitude={this.state.latitude}></Map>
+                  <Map style={{ zIndex: 0 }} coupleResults={this.state.coupleResults} groupResults={this.state.groupResults} longitude={this.state.longitude} latitude={this.state.latitude}></Map>
                 </View>
                 :
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>

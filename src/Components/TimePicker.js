@@ -4,8 +4,10 @@ import TimePicker from "react-native-24h-timepicker";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Button } from 'react-native-elements';
 
-var hour_now = '10';
-var minute_now = '00'
+// var hour_now = '10';
+// var minute_now = '00';
+let hour_now = new Date().getHours();
+let minute_now = new Date().getMinutes();
 
 export default class TimePickerNew extends Component {
     constructor(props) {
@@ -36,6 +38,7 @@ export default class TimePickerNew extends Component {
             <View style={styles.timePickerContainer}>
 
                 <Button
+                disabled={this.props.disabled}
                     buttonStyle={{
                         backgroundColor: 'transparent'
                     }}
@@ -49,6 +52,7 @@ export default class TimePickerNew extends Component {
                 </Button>
 
                 <TimePicker
+                    minHour={5}
                     selectedHour={hour_now.toString()}
                     selectedMinute={minute_now.toString()}
                     ref={ref => {

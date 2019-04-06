@@ -324,7 +324,7 @@ export default class SignIn1 extends Component {
 
                 <Text style={styles.signUpText}>Sign up</Text>
 
-                <Text style={styles.whoAreYouText}>WHO YOU ARE ?</Text>
+                <Text style={styles.whoAreYouText}>WHO ARE YOU?</Text>
 
               </View>
 

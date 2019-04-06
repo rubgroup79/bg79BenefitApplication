@@ -147,7 +147,7 @@ export default class Login extends Component {
 
 
     updateToken(token){
-     console.warn("the token"+ token);
+    
       fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/UpdateToken?Token='+token+"&UserCode="+this.state.userCode, {
  
         method: 'POST',
@@ -155,19 +155,7 @@ export default class Login extends Component {
         body: JSON.stringify({}),
       })
         .then(res => res.json())
-        .then(response => {
-          if (response.userCode != 0) {
-            this.setState({ userCode: response.UserCode, isTrainer: response.isTrainer });
-            
-       
-            alert("Success! User Code= " + this.state.userCode);
-   
-            
-          }
-          else
-            alert("Incorrect password");
-        })
-
+        .then(response => { })
         .catch(error => console.warn('Error:', error.message));
     
     }
@@ -187,8 +175,8 @@ export default class Login extends Component {
       })
         .then(res => res.json())
         .then(response => {
-          if (response.userCode != 0) {
-            this.setState({ userCode: response.UserCode, isTrainer: response.isTrainer });
+          if (response.UserCode != 0) {
+            this.setState({ userCode: response.UserCode, isTrainer: response.IsTrainer });
             //this.props.navigation.navigate('Components', { userCode: this.state.UserCode });
             this.registerForPushNotifications();
             alert("Success! User Code= " + this.state.userCode);
@@ -230,12 +218,10 @@ export default class Login extends Component {
           if (response) {
             alert('Email already exists!');
           }
-          else if (isEmailValid) this.props.navigation.navigate('SignIn1', { email: this.state.email, password: this.state.password });
+          else if (this.state.isEmailValid) this.props.navigation.navigate('SignIn1', { email: this.state.email, password: this.state.password });
         })
 
         .catch(error => console.warn('Error:', error.message));
-
-
     }
 
     render() {

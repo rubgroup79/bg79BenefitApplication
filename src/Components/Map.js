@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View, Dimensions, Image, StyleSheet} from 'react-native';
-import { MapView } from 'expo';
+import { MapView, MapMarkerWaypoint } from 'expo';
 const { Marker } = MapView;
 _Latitude = 0;
 _Longitude = 0;
@@ -9,37 +9,16 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 
 
 export default class LocationPage extends React.Component {
-  static navigationOptions = {
-    title: 'LOCATION',
-  };
+
   constructor(props) {
     super(props);
     this.state = {
       latitude: 0,
       longitude: 0
     }
-    this.show = this.show.bind(this);
-  }
-
-
-
-  show() {
-    console.warn('show');
-    return this.props.couple_results.map((data) => {
-      return (
-        <Marker
-          coordinate={{
-            latitude: data.Latitude,
-            longitude: data.Longitude
-          }}
-        // title={result.FirstName}
-        // description={result.Age}
-        //image={require('../assets/icon.png')}
-        />
-      )
-    })
 
   }
+
 
   render() {
     return (
@@ -57,17 +36,34 @@ export default class LocationPage extends React.Component {
                 latitudeDelta: 0.01322,
                 longitudeDelta: 0.01321,
               }}
+           
+             
             >
-              <Marker
-                coordinate={{
-                  latitude: this.props.latitude,
-                  longitude: this.props.longitude
-                }}
-                title='my place:)'
-                description='here i am'
-              //image={require('../assets/icon.png')}
+              <MapView.Marker
+               coordinate={{
+                latitude: this.props.latitude,
+                longitude: this.props.longitude
+              }}
+              // title='my place:)'
+              // description='here i am'
+              >
+               
+            <MapView.Callout
+      
+            style={{ flex: -1, position: 'absolute', width:100, height:80}}
+            tooltip={false} >
+          <View style={{flex:1, flexDirection:'column', justifyContent:"center", alignItems:"center"}}>
+            <Text>That's you</Text>
+          <Image
+                source={require("../../Images/TrainerAvatar.png")}
+                style={{width:50, height:50}}
               />
-              {(this.props.coupleResults.length==0 && this.props.searchMode==true ) ? alert('no results') : this.props.coupleResults.map(data => (
+          </View>
+            </MapView.Callout>
+           
+                </MapView.Marker>
+        
+              {this.props.coupleResults.map(data => (
                 <Marker
                   coordinate={{
                     latitude: data.Latitude,
@@ -79,7 +75,7 @@ export default class LocationPage extends React.Component {
                 />
               )
               )}
-              {(this.props.groupResults.length==0 && this.props.searchMode==true) ? alert('no results') : this.props.groupResults.map(data => (
+              {this.props.groupResults.map(data => (
                 <Marker
                   coordinate={{
                     latitude: data.Latitude,
@@ -91,7 +87,7 @@ export default class LocationPage extends React.Component {
                 />
               )
               )}
-              {/* {this.props.couple_results && this.show()} */}
+
             </MapView>
 
       </View>
