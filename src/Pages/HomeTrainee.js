@@ -8,6 +8,7 @@ import { Font } from 'expo';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ActionButton from 'react-native-action-button';
 import Icon1 from 'react-native-vector-icons/Feather';
+import Icon2 from 'react-native-vector-icons/AntDesign';
 import TimePickerNew from '../Components/TimePicker';
 import moment from 'moment';
 
@@ -38,10 +39,10 @@ export default class HomeTrainee extends Component {
       withPartner: false,
       groupWithTrainer: false,
       groupWithPartners: false,
-      startTime: '10:00',
-      endTime: '10:00',
-      //startTime: (moment(new Date()).format('YYYY-MM-DD HH:mm:ss')),
-      //endTime: (moment(new Date()).format('YYYY-MM-DD HH:mm:ss')),
+      // startTime: moment(new Date()).format('YYYY-MM-DD')+" " + timeNow+ ":00.000",
+      // endTime: moment(new Date()).format('YYYY-MM-DD')+" " + timeNow+ ":00.000",
+      startTime: (moment(new Date()).format('YYYY-MM-DD HH:mm:ss')),
+      endTime: (moment(new Date()).format('YYYY-MM-DD HH:mm:ss')),
       coupleResults: [],
       groupResults: [],
       
@@ -57,14 +58,12 @@ export default class HomeTrainee extends Component {
   }
 
   onConfirmStartTime = (hour, minute) => {
-    this.state.endTimePickerDisabled= false;
      start=hour+":"+minute;
       this.setState({ startTime: moment(new Date()).format('YYYY-MM-DD')+" " + start +":00.000"});
       
   }
 
   onConfirmEndTime = (hour, minute) => {
-    this.state.endTimePickerDisabled= false;
     end=hour+":"+minute;
     this.setState({ endTime: moment(new Date()).format('YYYY-MM-DD')+" " +end+":00.000"});
   }
@@ -121,38 +120,11 @@ export default class HomeTrainee extends Component {
     );
   };
 
-  // setTime = () => {
-  //   let hours_now = new Date().getHours();
-  //   let minutes_now = new Date().getMinutes();
-  //   let timeNow = hours_now + ":" + minutes_now;
-  //   let dayStart = new Date();
-  //   let dayEnd = new Date();
-
-  //    if (this.state.startTime < timeNow) {
-  //     dayStart = moment(dayStart).add(1, 'day').format('YYYY-MM-DD');
-  //     dayEnd = moment(dayEnd).add(1, 'day').format('YYYY-MM-DD');
-  //   }
-
-  //   else if (this.state.endTime < timeNow) {
-  //     dayStart = moment(dayStart).add(0, 'day').format('YYYY-MM-DD');
-  //     dayEnd = moment(dayEnd).add(1, 'day').format('YYYY-MM-DD');
-  //   }
-
-  //   else {
-  //     dayStart = moment(dayStart).add(0, 'day').format('YYYY-MM-DD');
-  //     dayEnd = moment(dayEnd).add(0, 'day').format('YYYY-MM-DD');
-  //   }
-
-  //   this.setState({ startTime: (dayStart + ' ' + this.state.startTime+ ':00.000').toString() });
-  //   this.setState({ endTime: (dayEnd + ' ' + this.state.endTime + ':00.000').toString() });
-    
-  //   return true;
-  // }
 
   search() {
     if (this.state.startTime < this.state.endTime) {
       var OnlineDetails = {
-        UserCode: 1,
+        UserCode: 28,
         //UserCode: this.props.navigation.getParam('userCode', '0'),
         Latitude: this.state.latitude,
         Longitude: this.state.longitude,
@@ -170,14 +142,15 @@ export default class HomeTrainee extends Component {
         body: JSON.stringify(OnlineDetails),
       })
         .then(res => res.json())
-        .then(response => {
-          if (response.length==0) alert ('no results')
+        .then(response => { console.warn(response);
+          if (response==null) alert ( 'no results')
            else this.setState({ coupleResults: response });
         })
 
         .catch(error => console.warn('Error:', error.message));
 
       if (this.state.groupWithTrainer || this.state.groupWithPartners) {
+        
         fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/SearchGroups', {
 
           method: 'POST',
@@ -186,7 +159,8 @@ export default class HomeTrainee extends Component {
         })
           .then(res => res.json())
           .then(response => {
-            this.setState({ groupResults: response });
+            if (response==null) alert ( 'no results')
+           else this.setState({ groupResults: response });
           })
 
           .catch(error => console.warn('Error:', error.message));
@@ -450,6 +424,24 @@ export default class HomeTrainee extends Component {
                   </View>
 
                   <Map style={{ zIndex: 0 }} coupleResults={this.state.coupleResults} groupResults={this.state.groupResults} longitude={this.state.longitude} latitude={this.state.latitude}></Map>
+                  
+                  <ActionButton
+                    buttonColor='#46db93'
+                    size={65}
+                    renderIcon={active => active ? (<Icon2
+                      name="addusergroup"
+                      size={45}
+                    />) : (<Icon2
+                      name="addusergroup"
+                      size={45}
+                    />)
+                    }
+                    onPress={() => {
+                      this.props.navigation.navigate('CreateGroup', {creatorCode: this.props.navigation.getParam('userCode', '0'), isTrainer: 0})}
+                      
+                  }
+                  ></ActionButton>
+
                 </View>
                 :
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>

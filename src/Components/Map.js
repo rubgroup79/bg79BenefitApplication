@@ -82,7 +82,7 @@ export default class LocationPage extends React.Component {
                     longitude: data.Longitude
                   }}
                   title={'Group'}
-                  description={'result'}
+                  description={'Time: '+data.TrainingTime}
                 //image={require('../assets/icon.png')}
                 />
               )

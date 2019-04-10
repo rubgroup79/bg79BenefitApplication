@@ -15,6 +15,7 @@ import Profile from './src/drawer/profile';
 import Lists from './src/drawer/lists';
 import Settings from './src/drawer/settings';
 import HomeTrainee from './src/Pages/HomeTrainee';
+import CreateGroup from './src/Pages/createGroup';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const CustomDrawerContentComponent = props => (
@@ -40,23 +41,30 @@ const MainRoot = DrawerNavigator(
     HomeTrainee: {
       path: '/homeTrainee',
       screen: HomeTrainee,
-      navigationOptions: {
-        drawerLabel:()=>null
-      }
+      // navigationOptions: {
+      //   drawerLabel:()=>null
+      // }
+    },
+    CreateGroup: {
+      path: '/createGroup',
+      screen: CreateGroup,
+      // navigationOptions: {
+      //   drawerLabel:()=>null
+      // }
     },
     SignIn1: {
       path: '/signIn1',
       screen: SignIn1,
-      navigationOptions: {
-        drawerLabel:()=>null
-      }
+      // navigationOptions: {
+      //   drawerLabel:()=>null
+      // }
     },
     SigninTrainee: {
       path: '/signinTrainee',
       screen: SigninTrainee,
-      navigationOptions: {
-        drawerLabel:()=>null
-      }
+      // navigationOptions: {
+      //   drawerLabel:()=>null
+      // }
     },
     Login: {
       path: '/login',
@@ -88,7 +96,7 @@ const MainRoot = DrawerNavigator(
     },
   },
   {
-    initialRouteName: 'SigninTrainee',
+    initialRouteName: 'HomeTrainee',
     contentOptions: {
       activeTintColor: '#548ff7',
       activeBackgroundColor: 'transparent',

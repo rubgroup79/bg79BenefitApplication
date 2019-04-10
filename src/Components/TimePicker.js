@@ -75,7 +75,6 @@ export default class TimePickerNew extends Component {
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: "center",
-            backgroundColor: "#fff",
             paddingTop: 0,
             marginTop: -30
         },
