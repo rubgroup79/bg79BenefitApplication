@@ -14,7 +14,9 @@ import moment from 'moment';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const MALE_AVATAR = require('../../Images/MaleAvatar.png');
-const FEMALE_AVATAR = require('../../Images/FemaleAvatar.png'); 3
+const FEMALE_AVATAR = require('../../Images/FemaleAvatar.png'); 
+const TRAINER_AVATAR = require('../../Images/TrainerAvatar.png');
+const TRAINEE_AVATAR = require('../../Images/TraineeAvatar.png');
 const APPROVED_REQUESTS = require('../../Images/ApprovedRequests.png');
 const PENDING_REQUESTS = require('../../Images/PendingRequests.png');
 const FUTURE_TRAININGS = require('../../Images/FutureTrainings.png');
@@ -39,8 +41,6 @@ export default class HomeTrainee extends Component {
       withPartner: false,
       groupWithTrainer: false,
       groupWithPartners: false,
-      // startTime: moment(new Date()).format('YYYY-MM-DD')+" " + timeNow+ ":00.000",
-      // endTime: moment(new Date()).format('YYYY-MM-DD')+" " + timeNow+ ":00.000",
       startTime: (moment(new Date()).format('YYYY-MM-DD HH:mm:ss')),
       endTime: (moment(new Date()).format('YYYY-MM-DD HH:mm:ss')),
       coupleResults: [],
@@ -124,8 +124,7 @@ export default class HomeTrainee extends Component {
   search() {
     if (this.state.startTime < this.state.endTime) {
       var OnlineDetails = {
-        UserCode: 28,
-        //UserCode: this.props.navigation.getParam('userCode', '0'),
+        UserCode: this.props.navigation.getParam('userCode', '0'),
         Latitude: this.state.latitude,
         Longitude: this.state.longitude,
         StartTime: this.state.startTime,
@@ -170,7 +169,6 @@ export default class HomeTrainee extends Component {
     else alert('Start time cannot be before end time');
 
   }
-
 
   render() {
     return (
@@ -260,18 +258,12 @@ export default class HomeTrainee extends Component {
                   <Text style={style = styles.trainingsHeadline}>
                     Looking for
                     </Text>
-                  {/* <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
 
-                    <Text style={{ flex: 1 }}>Couple</Text>
-
-                    <Text style={{ flex: 1 }}>Group</Text>
-
-                  </View> */}
                   <View style={styles.trainingsPreferencesContainerStyle} >
 
                     <GenderButton style={{ margin: 10 }}
                       label="Partner"
-                      image={MALE_AVATAR}
+                      image={TRAINER_AVATAR}
                       onPress={
                         () => {
                           this.setPartnerTraining();
@@ -282,7 +274,7 @@ export default class HomeTrainee extends Component {
 
                     <GenderButton style={{ margin: 10 }}
                       label="Trainer"
-                      image={MALE_AVATAR}
+                      image={TRAINEE_AVATAR}
                       onPress={
                         () => {
                           this.setTrainerTraining();
@@ -481,7 +473,6 @@ const styles = StyleSheet.create({
   trainingsPreferencesStyle: {
     flex: 2,
     flexDirection: 'column',
-    //marginTop: 10,
     justifyContent: 'center',
     alignItems: 'center'
   },

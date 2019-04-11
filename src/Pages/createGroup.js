@@ -3,7 +3,6 @@ import {
     LayoutAnimation,
     Dimensions,
     UIManager,
-    KeyboardAvoidingView,
     StyleSheet,
     ScrollView,
     Text,
@@ -11,7 +10,6 @@ import {
 } from 'react-native';
 import { Font } from 'expo';
 import { Input, Button, withTheme } from 'react-native-elements';
-import MyDatePicker from '../Components/datePicker';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
 import NumericInput from 'react-native-numeric-input';
@@ -170,7 +168,7 @@ export default class CreateGroup extends Component {
     CreateGroup() {
         const isCategoriesValid = this.validateCategories();
         const isLocationValid = this.validateLocation();
-        var Group=null;
+        var Group = null;
         if (
             isCategoriesValid &&
             isLocationValid
@@ -181,12 +179,11 @@ export default class CreateGroup extends Component {
             setTimeout(() => {
                 LayoutAnimation.easeInEaseOut();
                 this.setState({
-                  isLoading: false,
+                    isLoading: false,
                 });
 
                 Group = {
-                    //CreatorCode: this.props.navigation.getParam('creatorCode', '0'),
-                    CreatorCode: 1,
+                    CreatorCode: this.props.navigation.getParam('creatorCode', '0'),
                     Latitude: this.state.latitude,
                     Longitude: this.state.longitude,
                     TrainingTime: this.state.groupTime,
@@ -207,11 +204,8 @@ export default class CreateGroup extends Component {
                     .then(res => res.json())
                     .then(response => { alert('success') })
                     .catch(error => console.warn('Error:', error.message));
-    
-              }, 1500);
-            
-           
 
+            }, 1500);
         }
     }
 
@@ -271,7 +265,6 @@ export default class CreateGroup extends Component {
 
         ) : (
                 <ScrollView
-                    //scrollEnabled={true}
                     keyboardShouldPersistTaps="handled"
                     contentContainerStyle={styles.container}
                 >
@@ -350,18 +343,6 @@ export default class CreateGroup extends Component {
 
                         </View>
 
-
-
-
-                        {/* <View style={styles.partnerPreferencesStyle}>
-
-                  <Text style={style = styles.genderHeadline}>
-                    Gender
-                    </Text>
-
-                </View> */}
-
-
                         <View style={{ flex: 1, flexDirection: 'row', marginLeft: 15 }}>
                             <Icon1
                                 size={40}
@@ -381,7 +362,7 @@ export default class CreateGroup extends Component {
 
                             <Text style={style = styles.partnersAgeHeadline}>
                                 Age
-</Text>
+                            </Text>
 
                             <View style={{ flex: 5, justifyContent: 'center', flexDirection: 'row', marginRight: 25 }}>
 
@@ -422,7 +403,7 @@ export default class CreateGroup extends Component {
                                 style={styles.textHeadlines}
                             >
                                 Choose one sport type for the group
-                </Text>
+                            </Text>
 
                             <View style={{ flex: 1, width: SCREEN_WIDTH, marginTop: 20, }}>
 

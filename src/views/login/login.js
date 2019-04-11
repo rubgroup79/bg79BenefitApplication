@@ -23,9 +23,6 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 const BG_IMAGE = require('../../../assets/images/bg_screen4.jpg');
 
-var tokenTest="";
-
-
 // Enable LayoutAnimation on Android
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -185,7 +182,6 @@ export default class Login extends Component {
         .then(response => {
           if (response.UserCode != 0) {
             this.setState({ userCode: response.UserCode, isTrainer: response.IsTrainer });
-            //this.props.navigation.navigate('Components', { userCode: this.state.UserCode });
             this.registerForPushNotifications();
             alert("Success! User Code= " + this.state.userCode);
             
@@ -227,7 +223,7 @@ export default class Login extends Component {
             alert('Email already exists!');
           }
           else if (this.state.isEmailValid && this.state.isConfirmationValid ) this.props.navigation.navigate('SignIn1', { email: this.state.email, password: this.state.password });
-          else alert("passss");
+          
         })
 
         .catch(error => console.warn('Error:', error.message));
