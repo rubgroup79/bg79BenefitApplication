@@ -185,7 +185,7 @@ export default class Login extends Component {
             this.registerForPushNotifications();
             alert("Success! User Code= " + this.state.userCode);
             
-            this.props.navigation.navigate('HomeTrainee', { userCode: this.state.UserCode });
+            this.props.navigation.navigate('HomeTrainee', { userCode: response.UserCode });
 
           }
           else
@@ -254,10 +254,10 @@ export default class Login extends Component {
                 >
                   <View style={styles.titleContainer}>
                     <View style={{ flexDirection: 'row' }}>
-                      <Text style={styles.titleText}>BEAUX</Text>
+                      <Text style={styles.titleText}>BeneFIT</Text>
                     </View>
                     <View style={{ marginTop: -10, marginLeft: 10 }}>
-                      <Text style={styles.titleText}>VOYAGES</Text>
+                      <Text style={styles.titleText}>Better Together</Text>
                     </View>
                   </View>
                   <View style={{ flexDirection: 'row' }}>

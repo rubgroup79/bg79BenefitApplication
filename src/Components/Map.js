@@ -62,8 +62,8 @@ export default class LocationPage extends React.Component {
             </MapView.Callout>
            
                 </MapView.Marker>
-        
-              {this.props.coupleResults.map(data => (
+        {this.props.coupleResults==null || this.props.coupleResults.length==0 ? null : 
+              this.props.coupleResults.map(data => (
                 <Marker
                   coordinate={{
                     latitude: data.Latitude,
@@ -75,14 +75,15 @@ export default class LocationPage extends React.Component {
                 />
               )
               )}
-              {this.props.groupResults.map(data => (
+               {this.props.groupResults==null? null : 
+              this.props.groupResults.map(data => (
                 <Marker
                   coordinate={{
                     latitude: data.Latitude,
                     longitude: data.Longitude
                   }}
                   title={'Group'}
-                  description={'Time: '+data.TrainingTime}
+                  //description={'Time: '+data.TrainingTime}
                 //image={require('../assets/icon.png')}
                 />
               )

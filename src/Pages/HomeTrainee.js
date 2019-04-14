@@ -14,7 +14,7 @@ import moment from 'moment';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const MALE_AVATAR = require('../../Images/MaleAvatar.png');
-const FEMALE_AVATAR = require('../../Images/FemaleAvatar.png'); 
+const FEMALE_AVATAR = require('../../Images/FemaleAvatar.png');
 const TRAINER_AVATAR = require('../../Images/TrainerAvatar.png');
 const TRAINEE_AVATAR = require('../../Images/TraineeAvatar.png');
 const APPROVED_REQUESTS = require('../../Images/ApprovedRequests.png');
@@ -45,7 +45,7 @@ export default class HomeTrainee extends Component {
       endTime: (moment(new Date()).format('YYYY-MM-DD HH:mm:ss')),
       coupleResults: [],
       groupResults: [],
-      
+
     };
 
     this.onConfirmStartTime = this.onConfirmStartTime.bind(this);
@@ -58,14 +58,14 @@ export default class HomeTrainee extends Component {
   }
 
   onConfirmStartTime = (hour, minute) => {
-     start=hour+":"+minute;
-      this.setState({ startTime: moment(new Date()).format('YYYY-MM-DD')+" " + start +":00.000"});
-      
+    start = hour + ":" + minute;
+    this.setState({ startTime: moment(new Date()).format('YYYY-MM-DD') + " " + start + ":00.000" });
+
   }
 
   onConfirmEndTime = (hour, minute) => {
-    end=hour+":"+minute;
-    this.setState({ endTime: moment(new Date()).format('YYYY-MM-DD')+" " +end+":00.000"});
+    end = hour + ":" + minute;
+    this.setState({ endTime: moment(new Date()).format('YYYY-MM-DD') + " " + end + ":00.000" });
   }
 
   switchChange() {
@@ -122,8 +122,10 @@ export default class HomeTrainee extends Component {
 
 
   search() {
+    this.setState({coupleResults:[], groupResults:[]});
     if (this.state.startTime < this.state.endTime) {
       var OnlineDetails = {
+        //UserCode: 28,
         UserCode: this.props.navigation.getParam('userCode', '0'),
         Latitude: this.state.latitude,
         Longitude: this.state.longitude,
@@ -134,22 +136,30 @@ export default class HomeTrainee extends Component {
         GroupWithTrainer: this.boolToInt(this.state.groupWithTrainer),
         GroupWithPartners: this.boolToInt(this.state.groupWithPartners),
       };
-  
-      fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/InsertOnlineTrainee', {
-        method: 'POST',
-        headers: { "Content-type": "application/json; charset=UTF-8" },
-        body: JSON.stringify(OnlineDetails),
-      })
-        .then(res => res.json())
-        .then(response => { console.warn(response);
-          if (response==null) alert ( 'no results')
-           else this.setState({ coupleResults: response });
+      console.warn(OnlineDetails);
+
+      //נכנס רק אם משתמש חיפש אימון זוגי עם מאמן או מתאמן
+
+      if (OnlineDetails.WithPartner == 1 || OnlineDetails.WithTrainer == 1) {
+
+        fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/InsertOnlineTrainee', {
+          method: 'POST',
+          headers: { "Content-type": "application/json; charset=UTF-8" },
+          body: JSON.stringify(OnlineDetails),
         })
+          .then(res => res.json())
+          .then(response => {
+            console.warn("results couple: " + JSON.stringify(response));
+            if (response.length == 0) alert('No Couple Training Results');
+            else this.setState({ coupleResults: response });
+          })
 
-        .catch(error => console.warn('Error:', error.message));
+          .catch(error => console.warn('Error:', error.message));
+      }
 
+      //נכנס רק אם משתמש חיפש אימון קבוצתי עם מאמן או בלי מאמן
       if (this.state.groupWithTrainer || this.state.groupWithPartners) {
-        
+
         fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/SearchGroups', {
 
           method: 'POST',
@@ -157,9 +167,10 @@ export default class HomeTrainee extends Component {
           body: JSON.stringify(OnlineDetails),
         })
           .then(res => res.json())
-          .then(response => {
-            if (response==null) alert ( 'no results')
-           else this.setState({ groupResults: response });
+          .then(response => { 
+            console.warn("results group: " + JSON.stringify(response));
+            if (response.length == 0 ) alert('No Group Results');
+            else this.setState({ groupResults: response });
           })
 
           .catch(error => console.warn('Error:', error.message));
@@ -263,7 +274,7 @@ export default class HomeTrainee extends Component {
 
                     <GenderButton style={{ margin: 10 }}
                       label="Partner"
-                      image={TRAINER_AVATAR}
+                      image={TRAINEE_AVATAR}
                       onPress={
                         () => {
                           this.setPartnerTraining();
@@ -274,7 +285,7 @@ export default class HomeTrainee extends Component {
 
                     <GenderButton style={{ margin: 10 }}
                       label="Trainer"
-                      image={TRAINEE_AVATAR}
+                      image={TRAINER_AVATAR}
                       onPress={
                         () => {
                           this.setTrainerTraining();
@@ -328,7 +339,7 @@ export default class HomeTrainee extends Component {
                     </View>
 
                   </View >
-                  
+
                   <View style={{ flex: 1, }}>
 
                     <ActionButton
@@ -416,7 +427,7 @@ export default class HomeTrainee extends Component {
                   </View>
 
                   <Map style={{ zIndex: 0 }} coupleResults={this.state.coupleResults} groupResults={this.state.groupResults} longitude={this.state.longitude} latitude={this.state.latitude}></Map>
-                  
+
                   <ActionButton
                     buttonColor='#46db93'
                     size={65}
@@ -429,9 +440,10 @@ export default class HomeTrainee extends Component {
                     />)
                     }
                     onPress={() => {
-                      this.props.navigation.navigate('CreateGroup', {creatorCode: this.props.navigation.getParam('userCode', '0'), isTrainer: 0})}
-                      
-                  }
+                      this.props.navigation.navigate('CreateGroup', { creatorCode: this.props.navigation.getParam('userCode', '0'), isTrainer: 0 })
+                    }
+
+                    }
                   ></ActionButton>
 
                 </View>
