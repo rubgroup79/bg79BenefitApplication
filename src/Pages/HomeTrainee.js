@@ -45,9 +45,13 @@ export default class HomeTrainee extends Component {
       endTime: (moment(new Date()).format('YYYY-MM-DD HH:mm:ss')),
       coupleResults: [],
       groupResults: [],
-pendingRequests: false,
-approvedRequests: false, 
-futureTrainings: false
+      pendingRequestsOn: false,
+      pendingRequests: [], 
+      futureTrainingsOn: false,
+      futureTrainings: [], 
+      approvedRequestsOn: false,
+      approvedRequests: []
+
     };
 
     this.onConfirmStartTime = this.onConfirmStartTime.bind(this);
@@ -183,6 +187,46 @@ futureTrainings: false
 
   }
 
+getPendingRequests(){ 
+  // var details = {
+  //   //UserCode: this.props.navigation.getParam('userCode', '0'),
+  //   UserCode: 10,
+  //   Sender: true
+  // }
+
+  fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/GetPendingSuggestions?UserCode=10&Sender=true', {
+
+    method: 'GET',
+    headers: { "Content-type": "application/json; charset=UTF-8" },
+    body: JSON.stringify({}),
+  })
+    .then(res => res.json())
+    .then(response => { 
+     this.setState({pendingRequests: response})
+    })
+    .catch(error => console.warn('Error:', error.message));
+    pendingRequestsDetails = this.state.pendingRequests.map(function (x) {
+    getRequestDetails(x.SuggestionCode)
+    });
+this.setState({pendingRequests: pendingRequestsDetails}); 
+console.warn(this.state.pendingRequestsDetails);
+}
+
+getRequestDetails (SuggestionCode){
+ 
+  fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/GetSuggestionDetails?SuggestionCode='+SuggestionCode, {
+
+    method: 'GET',
+    headers: { "Content-type": "application/json; charset=UTF-8" },
+    body: JSON.stringify({}),
+  })
+    .then(res => res.json())
+    .then(response => { 
+     this.setState({pendingRequests: response})
+    })
+    .catch(error => console.warn('Error:', error.message));
+}
+
   render() {
     return (
       <View style={{ flex: 1, flexDirection: 'column', width: SCREEN_WIDTH }}>
@@ -208,7 +252,10 @@ futureTrainings: false
                     PENDING_REQUESTS
                   }
                   size="medium"
-                  onPress={()=>this.setState({pendingRequests: true })}
+                  onPress={()=>{
+                    this.setState({pendingRequestsOn: true, approvedRequestsOn:false, futureTrainingsOn: false});
+                    this.getPendingRequests();
+                  }}
                 />
 
                 <Badge
@@ -227,7 +274,7 @@ futureTrainings: false
                     APPROVED_REQUESTS
                   }
                   size="medium"
-                  onPress={()=> this.setState({approvedRequests: true})}
+                  onPress={()=> this.setState({approvedRequestsOn: true, pendingRequestsOn: false, futureTrainingsOn: false})}
                 />
 
                 <Badge
@@ -246,7 +293,7 @@ futureTrainings: false
                     FUTURE_TRAININGS
                   }
                   size="medium"
-                  onPress={()=> this.setState({futureTrainings: true})}
+                  onPress={()=> this.setState({futureTrainingsOn: true, approvedRequestsOn: false, pendingRequestsOn: false})}
 
                 />
 
@@ -370,23 +417,73 @@ futureTrainings: false
 
               </View>
               :
-              this.state.pendingRequests ? 
-              <View>
+              this.state.pendingRequestsOn ?
+              <View style={{ flex: 4, flexDirection: 'column', marginBottom: 15, marginTop: 10 }}>
 
-              </View> 
-              : 
-                this.state.futureTrainings ? 
-              <View>
-                  
-              </View> 
-              : 
-              this.state.approvedRequests ? 
-              <View>
-                  
-              </View> 
-              : null
-            
-            }
+              <View style={styles.trainingsPreferencesStyle}>
+
+                <Text style={style = styles.trainingsHeadline}>
+                  Your Pending Requests
+                  </Text>
+
+                <View style={styles.trainingsPreferencesContainerStyle} >
+
+                 
+
+                </View>
+
+              </View>
+
+              <View style={{ flex: 1, flexDirection: 'row' }}>
+
+                <View style={{ flex: 4, flexDirection: 'row', marginLeft: 15 }}>
+
+                  <Icon
+                    size={40}
+                    color='rgba(216, 121, 112, 1)'
+                    name='clock-o'
+                  ></Icon>
+
+                  <View style={{ flex: 1, flexDirection: 'row' }}>
+
+                    <TimePickerNew setTime={this.onConfirmStartTime} title={'From: '}></TimePickerNew>
+
+                    <TimePickerNew setTime={this.onConfirmEndTime} title={'To: '}></TimePickerNew>
+
+                  </View>
+
+                </View >
+
+                <View style={{ flex: 1, }}>
+
+                  <ActionButton
+                    buttonColor='#46db93'
+                    size={50}
+                    renderIcon={active => active ? (<Icon1
+                      name="md-create"
+                      size={60}
+                    />) :
+                      (<Icon
+                        name='search'
+                        color='white'
+                        size={20}
+                      />)
+                    }
+                    onPress={() => this.search()}
+                  ></ActionButton>
+
+                </View>
+
+              </View>
+
+            </View>
+               : 
+               this.state.futureTrainingsOn ?
+               <View>              </View>
+               :    this.state.approvedRequestsOn ?
+               <View>              </View>
+               : null
+              }
 
             <View style={{ flex: 6, }}>
 
@@ -446,7 +543,7 @@ futureTrainings: false
 
                   </View>
 
-                  <Map style={{ zIndex: 0 }} coupleResults={this.state.coupleResults} groupResults={this.state.groupResults} longitude={this.state.longitude} latitude={this.state.latitude}></Map>
+                  <Map style={{ zIndex: 0 }} userCode= {this.props.navigation.getParam('userCode', '0')} coupleResults={this.state.coupleResults} groupResults={this.state.groupResults} longitude={this.state.longitude} latitude={this.state.latitude}></Map>
 
                   <ActionButton
                     buttonColor='#46db93'
