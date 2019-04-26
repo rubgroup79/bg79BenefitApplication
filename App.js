@@ -9,12 +9,14 @@ import SignIn1 from "./src/views/login/signIn1";
 import Components from './src/drawer/components';
 import Ratings from './src/drawer/ratings';
 import Pricing from './src/drawer/pricing';
-//import Login from './src/drawer/login';
 import SigninTrainee from './src/views/login/signinTrainee';
+import SigninTrainer from './src/views/login/signinTrainer';
 import Profile from './src/drawer/profile';
 import Lists from './src/drawer/lists';
 import Settings from './src/drawer/settings';
 import HomeTrainee from './src/Pages/HomeTrainee';
+import HomeTrainer from './src/Pages/HomeTrainer';
+
 import CreateGroup from './src/Pages/createGroup';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -45,6 +47,13 @@ const MainRoot = DrawerNavigator(
       //   drawerLabel:()=>null
       // }
     },
+    HomeTrainer: {
+      path: '/homeTrainer',
+      screen: HomeTrainer,
+      // navigationOptions: {
+      //   drawerLabel:()=>null
+      // }
+    },
     CreateGroup: {
       path: '/createGroup',
       screen: CreateGroup,
@@ -62,6 +71,13 @@ const MainRoot = DrawerNavigator(
     SigninTrainee: {
       path: '/signinTrainee',
       screen: SigninTrainee,
+      // navigationOptions: {
+      //   drawerLabel:()=>null
+      // }
+    },
+    SigninTrainer: {
+      path: '/signinTrainer',
+      screen: SigninTrainer,
       // navigationOptions: {
       //   drawerLabel:()=>null
       // }
@@ -96,7 +112,7 @@ const MainRoot = DrawerNavigator(
     },
   },
   {
-    initialRouteName: 'HomeTrainee',
+    initialRouteName: 'HomeTrainer',
     contentOptions: {
       activeTintColor: '#548ff7',
       activeBackgroundColor: 'transparent',

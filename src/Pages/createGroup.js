@@ -141,6 +141,7 @@ export default class CreateGroup extends Component {
             minParticipants: 3,
             maxParticipants: 7,
             sportCategory: 0,
+            price:0
         };
 
         this.validateCategories = this.validateCategories.bind(this);
@@ -193,7 +194,7 @@ export default class CreateGroup extends Component {
                     SportCategoryCode: this.state.sportCategory,
                     StatusCode: 1,
                     CurrentParticipants: 1,
-                    Price: 0
+                    Price: this.state.price
                 }
                 console.warn(Group);
                 fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/InsertGroupTraining', {
@@ -397,6 +398,39 @@ export default class CreateGroup extends Component {
 
                         </View>
 
+
+{(this.props.navigation.getParam('isTrainer', '0')==1) ?
+<View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignContent: "center", marginTop: 20 }}>
+
+<Text style={style = styles.partnersAgeHeadline}>
+    Price
+</Text>
+
+<View style={{ flex: 5, justifyContent: 'center', flexDirection: 'row', marginRight: 25 }}>
+
+    <Text style={{ flex: 1, color: 'white', textAlign: 'center', marginTop: 10, fontWeight: 'bold' }}>$</Text>
+
+    <NumericInput
+        style={styles.numericInput}
+        value={this.state.maxParticipants}
+        onChange={value => this.setState({ maxParticipants: value })}
+        type='up-down'
+        initValue={this.state.maxParticipants}
+        totalWidth={100}
+        textColor='white'
+        minValue={this.state.minParticipants}
+        maxValue={20}
+        rounded
+    />
+</View>
+
+</View>
+ : null
+
+
+}
+                       
+
                         <View style={{ flex: 1 }}>
 
                             <Text
@@ -453,7 +487,6 @@ export default class CreateGroup extends Component {
                             </View>
 
                         </View>
-
 
                         <Button
                             containerStyle={{ marginVertical: 20 }}

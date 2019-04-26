@@ -193,10 +193,13 @@ export default class SignIn1 extends Component {
       setTimeout(() => {
         LayoutAnimation.easeInEaseOut();
         this.setState({ isLoading: false });
+        // IF THE USER IS TRAINEE
         if (this.state.isTrainer == 0)
           this.props.navigation.navigate('SigninTrainee', { email: this.props.navigation.getParam('email', null), password: this.props.navigation.getParam('password', null), firstName: this.state.firstName, lastName: this.state.lastName, gender: this.state.gender, dateOfBirth: this.state.dateOfBirth, sportCategories: this.state.sportCategories });
-        else {
-          alert('אלירן סבג למה ככה חזק');
+        // USER IS TRAINER
+          else {
+            this.props.navigation.navigate('SigninTrainer', { email: this.props.navigation.getParam('email', null), password: this.props.navigation.getParam('password', null), firstName: this.state.firstName, lastName: this.state.lastName, gender: this.state.gender, dateOfBirth: this.state.dateOfBirth, sportCategories: this.state.sportCategories });
+
           console.warn(this.state);
         }
       }, 1500);
@@ -334,7 +337,7 @@ export default class SignIn1 extends Component {
                   label="Trainee"
                   labelColor="#ECC841"
                   image={TRAINEE_AVATAR}
-                  onPress={() => {
+                  onPress={() => {  
                     this.setSelectedType('Trainee');
                     this.setState({ isTrainer: 0 });
                   }}

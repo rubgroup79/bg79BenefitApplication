@@ -185,8 +185,9 @@ export default class Login extends Component {
             this.registerForPushNotifications();
             alert("Success! User Code= " + this.state.userCode);
             
+            if (response.IsTrainer==0) // a trainee
             this.props.navigation.navigate('HomeTrainee', { userCode: response.UserCode });
-
+else  this.props.navigation.navigate('HomeTrainer', { userCode: response.UserCode });
           }
           else
             alert("Incorrect password");

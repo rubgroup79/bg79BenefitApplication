@@ -25,7 +25,7 @@ var minutes_now = new Date().getMinutes();
 var timeNow = hours_now + ":" + minutes_now;
 
 
-export default class HomeTrainee extends Component {
+export default class HomeTrainer extends Component {
   constructor(props) {
 
     super(props);
@@ -123,8 +123,8 @@ futureTrainings: false
   };
 
 
-  search() {
-    this.setState({coupleResults:[], groupResults:[]});
+  insertOnlineTrainer() {
+    //this.setState({coupleResults:[], groupResults:[]});
     if (this.state.startTime < this.state.endTime) {
       var OnlineDetails = {
         //UserCode: 28,
@@ -133,53 +133,23 @@ futureTrainings: false
         Longitude: this.state.longitude,
         StartTime: this.state.startTime,
         EndTime: this.state.endTime,
-        WithTrainer: this.boolToInt(this.state.withTrainer),
-        WithPartner: this.boolToInt(this.state.withPartner),
-        GroupWithTrainer: this.boolToInt(this.state.groupWithTrainer),
-        GroupWithPartners: this.boolToInt(this.state.groupWithPartners),
+       
       };
       console.warn(OnlineDetails);
 
-      //נכנס רק אם משתמש חיפש אימון זוגי עם מאמן או מתאמן
-
-      if (OnlineDetails.WithPartner == 1 || OnlineDetails.WithTrainer == 1) {
-
-        fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/InsertOnlineTrainee', {
+     
+        fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/InsertOnlineTrainer', {
           method: 'POST',
           headers: { "Content-type": "application/json; charset=UTF-8" },
           body: JSON.stringify(OnlineDetails),
         })
           .then(res => res.json())
           .then(response => {
-            console.warn("results couple: " + JSON.stringify(response));
-            if (response.length == 0) alert('No Couple Training Results');
-            else this.setState({ coupleResults: response });
           })
 
           .catch(error => console.warn('Error:', error.message));
       }
 
-      //נכנס רק אם משתמש חיפש אימון קבוצתי עם מאמן או בלי מאמן
-      if (this.state.groupWithTrainer || this.state.groupWithPartners) {
-
-        fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/SearchGroups', {
-
-          method: 'POST',
-          headers: { "Content-type": "application/json; charset=UTF-8" },
-          body: JSON.stringify(OnlineDetails),
-        })
-          .then(res => res.json())
-          .then(response => { 
-            console.warn("results group: " + JSON.stringify(response));
-            if (response.length == 0 ) alert('No Group Results');
-            else this.setState({ groupResults: response });
-          })
-
-          .catch(error => console.warn('Error:', error.message));
-      }
-
-    }
-    else alert('Start time cannot be before end time');
 
   }
 
@@ -273,54 +243,10 @@ futureTrainings: false
                 <View style={styles.trainingsPreferencesStyle}>
 
                   <Text style={style = styles.trainingsHeadline}>
-                    Looking for
+                    Open for personal trainings
                     </Text>
 
                   <View style={styles.trainingsPreferencesContainerStyle} >
-
-                    <GenderButton style={{ margin: 10 }}
-                      label="Partner"
-                      image={TRAINEE_AVATAR}
-                      onPress={
-                        () => {
-                          this.setPartnerTraining();
-                        }
-                      }
-                      selected={this.state.withPartner == true}
-                    />
-
-                    <GenderButton style={{ margin: 10 }}
-                      label="Trainer"
-                      image={TRAINER_AVATAR}
-                      onPress={
-                        () => {
-                          this.setTrainerTraining();
-                        }
-                      }
-                      selected={this.state.withTrainer == true}
-                    />
-
-                    <GenderButton style={{ margin: 10 }}
-                      label="Partners"
-                      image={MALE_AVATAR}
-                      onPress={
-                        () => {
-                          this.setPartnersGroupTraining();
-                        }
-                      }
-                      selected={this.state.groupWithPartners == true}
-                    />
-
-                    <GenderButton style={{ margin: 10 }}
-                      label="Partners & Trainer"
-                      image={FEMALE_AVATAR}
-                      onPress={
-                        () => {
-                          this.setTrainerGroupTraining();
-                        }
-                      }
-                      selected={this.state.groupWithTrainer == true}
-                    />
 
                   </View>
 
@@ -356,12 +282,12 @@ futureTrainings: false
                         size={60}
                       />) :
                         (<Icon
-                          name='search'
+                          name='check'
                           color='white'
                           size={20}
                         />)
                       }
-                      onPress={() => this.search()}
+                      onPress={() => this.insertOnlineTrainer()}
                     ></ActionButton>
 
                   </View>
