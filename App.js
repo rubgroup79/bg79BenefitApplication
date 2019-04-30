@@ -13,6 +13,8 @@ import SigninTrainee from './src/views/login/signinTrainee';
 import SigninTrainer from './src/views/login/signinTrainer';
 import Profile from './src/drawer/profile';
 import Lists from './src/drawer/lists';
+import ListTest from './src/Components/ListTest';
+import ListsScreen1 from './src/views/lists/screen1'
 import Settings from './src/drawer/settings';
 import HomeTrainee from './src/Pages/HomeTrainee';
 import HomeTrainer from './src/Pages/HomeTrainer';
@@ -94,6 +96,7 @@ const MainRoot = DrawerNavigator(
       path: '/lists',
       screen: Lists,
     },
+   
     Components: {
       path: '/components',
       screen: Components,
@@ -112,7 +115,7 @@ const MainRoot = DrawerNavigator(
     },
   },
   {
-    initialRouteName: 'HomeTrainer',
+    initialRouteName: 'HomeTrainee',
     contentOptions: {
       activeTintColor: '#548ff7',
       activeBackgroundColor: 'transparent',

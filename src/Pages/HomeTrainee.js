@@ -11,6 +11,7 @@ import Icon1 from 'react-native-vector-icons/Feather';
 import Icon2 from 'react-native-vector-icons/AntDesign';
 import TimePickerNew from '../Components/TimePicker';
 import moment from 'moment';
+import ListTest from '../Components/ListTest';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const MALE_AVATAR = require('../../Images/MaleAvatar.png');
@@ -54,7 +55,7 @@ export default class HomeTrainee extends Component {
 
     };
 
-    this.onConfirmStartTime = this.onConfirmStartTime.bind(this);
+    this.onConfirmStartTime = this.onConfirmStartTime.bind(this)
   }
 
   boolToInt(b) {
@@ -78,7 +79,6 @@ export default class HomeTrainee extends Component {
     this.setState({ isSwitchOn: !this.state.isSwitchOn })
 
   }
-
 
   async componentDidMount() {
     await Font.loadAsync({
@@ -194,35 +194,16 @@ getPendingRequests(){
   //   Sender: true
   // }
 
-  fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/GetPendingSuggestions?UserCode=10&Sender=true', {
+  fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/GetSuggestions?UserCode=28&Sender=true&IsApproved=true', {
 
     method: 'GET',
     headers: { "Content-type": "application/json; charset=UTF-8" },
-    body: JSON.stringify({}),
+    //body: JSON.stringify({}),
   })
     .then(res => res.json())
     .then(response => { 
      this.setState({pendingRequests: response})
-    })
-    .catch(error => console.warn('Error:', error.message));
-    pendingRequestsDetails = this.state.pendingRequests.map(function (x) {
-    getRequestDetails(x.SuggestionCode)
-    });
-this.setState({pendingRequests: pendingRequestsDetails}); 
-console.warn(this.state.pendingRequestsDetails);
-}
-
-getRequestDetails (SuggestionCode){
- 
-  fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/GetSuggestionDetails?SuggestionCode='+SuggestionCode, {
-
-    method: 'GET',
-    headers: { "Content-type": "application/json; charset=UTF-8" },
-    body: JSON.stringify({}),
-  })
-    .then(res => res.json())
-    .then(response => { 
-     this.setState({pendingRequests: response})
+     console.warn(this.state.pendingRequests)
     })
     .catch(error => console.warn('Error:', error.message));
 }
@@ -253,7 +234,7 @@ getRequestDetails (SuggestionCode){
                   }
                   size="medium"
                   onPress={()=>{
-                    this.setState({pendingRequestsOn: true, approvedRequestsOn:false, futureTrainingsOn: false});
+                    this.setState({pendingRequestsOn: !this.state.pendingRequestsOn, approvedRequestsOn:false, futureTrainingsOn: false});
                     this.getPendingRequests();
                   }}
                 />
@@ -418,65 +399,24 @@ getRequestDetails (SuggestionCode){
               </View>
               :
               this.state.pendingRequestsOn ?
-              <View style={{ flex: 4, flexDirection: 'column', marginBottom: 15, marginTop: 10 }}>
+            
+            <View style={{ flex: 4, flexDirection: 'column', marginBottom: 15, marginTop: 10 }}>
 
-              <View style={styles.trainingsPreferencesStyle}>
+<ListTest></ListTest>
+               {/* <View style={styles.trainingsPreferencesStyle}>
 
-                <Text style={style = styles.trainingsHeadline}>
-                  Your Pending Requests
-                  </Text>
+                 <Text style={style = styles.trainingsHeadline}>
+                   Your Pending Requests
+                   </Text>
 
-                <View style={styles.trainingsPreferencesContainerStyle} >
+                 <View style={{flex:2 , flexDirection: 'column', marginBottom: 15, marginTop: 10 }} >
 
                  
+                 </View>
 
-                </View>
+               </View> */}
 
-              </View>
-
-              <View style={{ flex: 1, flexDirection: 'row' }}>
-
-                <View style={{ flex: 4, flexDirection: 'row', marginLeft: 15 }}>
-
-                  <Icon
-                    size={40}
-                    color='rgba(216, 121, 112, 1)'
-                    name='clock-o'
-                  ></Icon>
-
-                  <View style={{ flex: 1, flexDirection: 'row' }}>
-
-                    <TimePickerNew setTime={this.onConfirmStartTime} title={'From: '}></TimePickerNew>
-
-                    <TimePickerNew setTime={this.onConfirmEndTime} title={'To: '}></TimePickerNew>
-
-                  </View>
-
-                </View >
-
-                <View style={{ flex: 1, }}>
-
-                  <ActionButton
-                    buttonColor='#46db93'
-                    size={50}
-                    renderIcon={active => active ? (<Icon1
-                      name="md-create"
-                      size={60}
-                    />) :
-                      (<Icon
-                        name='search'
-                        color='white'
-                        size={20}
-                      />)
-                    }
-                    onPress={() => this.search()}
-                  ></ActionButton>
-
-                </View>
-
-              </View>
-
-            </View>
+             </View>
                : 
                this.state.futureTrainingsOn ?
                <View>              </View>

@@ -75,65 +75,65 @@ export default class ListsScreen1 extends Component {
     this.setState({ fontLoaded: true });
   }
 
-  renderValue(user) {
-    const { value, positive } = user;
+  // renderValue(user) {
+  //   const { value, positive } = user;
 
-    if (positive) {
-      return (
-        <View
-          style={{
-            backgroundColor: 'rgba(220,230,218,1)',
-            width: 70,
-            height: 28,
-            borderRadius: 5,
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'row',
-            marginLeft: 10,
-          }}
-        >
-          <Icon name="md-arrow-dropup" color="green" size={25} />
-          <Text
-            style={{
-              color: 'green',
-              fontFamily: 'regular',
-              fontSize: 13,
-              marginLeft: 5,
-            }}
-          >
-            {value}
-          </Text>
-        </View>
-      );
-    } else {
-      return (
-        <View
-          style={{
-            backgroundColor: 'rgba(244,230,224,1)',
-            width: 70,
-            height: 28,
-            borderRadius: 5,
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'row',
-            marginLeft: 10,
-          }}
-        >
-          <Icon name="md-arrow-dropdown" color="red" size={25} />
-          <Text
-            style={{
-              color: 'red',
-              fontFamily: 'regular',
-              fontSize: 13,
-              marginLeft: 5,
-            }}
-          >
-            {value}
-          </Text>
-        </View>
-      );
-    }
-  }
+  //   if (positive) {
+  //     return (
+  //       <View
+  //         style={{
+  //           backgroundColor: 'rgba(220,230,218,1)',
+  //           width: 70,
+  //           height: 28,
+  //           borderRadius: 5,
+  //           justifyContent: 'center',
+  //           alignItems: 'center',
+  //           flexDirection: 'row',
+  //           marginLeft: 10,
+  //         }}
+  //       >
+  //         <Icon name="md-arrow-dropup" color="green" size={25} />
+  //         <Text
+  //           style={{
+  //             color: 'green',
+  //             fontFamily: 'regular',
+  //             fontSize: 13,
+  //             marginLeft: 5,
+  //           }}
+  //         >
+  //           {value}
+  //         </Text>
+  //       </View>
+  //     );
+  //   } else {
+  //     return (
+  //       <View
+  //         style={{
+  //           backgroundColor: 'rgba(244,230,224,1)',
+  //           width: 70,
+  //           height: 28,
+  //           borderRadius: 5,
+  //           justifyContent: 'center',
+  //           alignItems: 'center',
+  //           flexDirection: 'row',
+  //           marginLeft: 10,
+  //         }}
+  //       >
+  //         <Icon name="md-arrow-dropdown" color="red" size={25} />
+  //         <Text
+  //           style={{
+  //             color: 'red',
+  //             fontFamily: 'regular',
+  //             fontSize: 13,
+  //             marginLeft: 5,
+  //           }}
+  //         >
+  //           {value}
+  //         </Text>
+  //       </View>
+  //     );
+  //   }
+  // }
 
   renderCard(user, index) {
     const { name, avatar } = user;
@@ -180,7 +180,7 @@ export default class ListsScreen1 extends Component {
             marginRight: 10,
           }}
         >
-          {this.renderValue(user)}
+          {/* {this.renderValue(user)} */}
           <View
             style={{
               backgroundColor: 'rgba(222,222,222,1)',
@@ -214,10 +214,10 @@ export default class ListsScreen1 extends Component {
           >
             <View style={styles.statusBar} />
             <View style={styles.navBar}>
-              <Text style={styles.nameHeader}>Growing</Text>
+              {/* <Text style={styles.nameHeader}>Growing</Text> */}
             </View>
             <ScrollView style={{ flex: 1, marginBottom: 20 }}>
-              <View
+              {/* <View
                 style={{
                   flex: 1,
                   flexDirection: 'column',
@@ -228,8 +228,8 @@ export default class ListsScreen1 extends Component {
                   height: 250,
                   marginBottom: 10,
                 }}
-              >
-                <View style={{ flex: 3, flexDirection: 'row' }}>
+              > */}
+                {/* <View style={{ flex: 3, flexDirection: 'row' }}>
                   <View
                     style={{
                       flex: 1,
@@ -275,8 +275,8 @@ export default class ListsScreen1 extends Component {
                       </Text>
                     </View>
                   </View>
-                </View>
-                <View
+                </View> */}
+                {/* <View
                   style={{
                     width: 300,
                     borderWidth: 0.5,
@@ -285,8 +285,8 @@ export default class ListsScreen1 extends Component {
                     height: 1,
                     marginVertical: 10,
                   }}
-                />
-                <View
+                /> */}
+                {/* <View
                   style={{
                     flex: 1,
                     flexDirection: 'row',
@@ -329,8 +329,8 @@ export default class ListsScreen1 extends Component {
                       underlayColor="transparent"
                     />
                   </View>
-                </View>
-              </View>
+                </View> */}
+              {/* </View> */}
               {this.renderListCards()}
             </ScrollView>
           </SafeAreaView>
