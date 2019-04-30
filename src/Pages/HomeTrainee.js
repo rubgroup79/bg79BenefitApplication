@@ -9,9 +9,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import ActionButton from 'react-native-action-button';
 import Icon1 from 'react-native-vector-icons/Feather';
 import Icon2 from 'react-native-vector-icons/AntDesign';
+
 import TimePickerNew from '../Components/TimePicker';
 import moment from 'moment';
-import ListTest from '../Components/ListTest';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const MALE_AVATAR = require('../../Images/MaleAvatar.png');
@@ -47,9 +47,9 @@ export default class HomeTrainee extends Component {
       coupleResults: [],
       groupResults: [],
       pendingRequestsOn: false,
-      pendingRequests: [], 
+      pendingRequests: [],
       futureTrainingsOn: false,
-      futureTrainings: [], 
+      futureTrainings: [],
       approvedRequestsOn: false,
       approvedRequests: []
 
@@ -173,7 +173,7 @@ export default class HomeTrainee extends Component {
           body: JSON.stringify(OnlineDetails),
         })
           .then(res => res.json())
-          .then(response => { 
+          .then(response => {
             console.warn("results group: " + JSON.stringify(response));
             if (response.length == 0 ) alert('No Group Results');
             else this.setState({ groupResults: response });
@@ -187,7 +187,7 @@ export default class HomeTrainee extends Component {
 
   }
 
-getPendingRequests(){ 
+getPendingRequests(){
   // var details = {
   //   //UserCode: this.props.navigation.getParam('userCode', '0'),
   //   UserCode: 10,
@@ -201,7 +201,7 @@ getPendingRequests(){
     //body: JSON.stringify({}),
   })
     .then(res => res.json())
-    .then(response => { 
+    .then(response => {
      this.setState({pendingRequests: response})
      console.warn(this.state.pendingRequests)
     })
@@ -399,25 +399,84 @@ getPendingRequests(){
               </View>
               :
               this.state.pendingRequestsOn ?
-            
-            <View style={{ flex: 4, flexDirection: 'column', marginBottom: 15, marginTop: 10 }}>
-
-<ListTest></ListTest>
-               {/* <View style={styles.trainingsPreferencesStyle}>
+            <View style={{ flex: 4, flexDirection: 'column',backgroundColor:  'rgba(222,222,222,1)', alignContent:"center"}}>
+                <View style={{flex:0.2, flexDirection:'column', alignContent: 'center'}}>
 
                  <Text style={style = styles.trainingsHeadline}>
                    Your Pending Requests
                    </Text>
+                   </View>
+                   <ScrollView style={{ flex: 1, marginBottom: 20 }}>
+                 {this.state.pendingRequests.map(function (x) {
+                   return (
+                    <View
+                    style={{
+                      height: 60,
+                      marginHorizontal: 10,
+                      marginTop: 10,
+                      backgroundColor: 'white',
+                      borderRadius: 5,
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                    }}
+                  >
+                    <View style={{ flex: 2, flexDirection: 'row', alignItems: 'center' }}>
+                      <View style={{ marginLeft: 15 }}>
+                        <Avatar
+                          small
+                          rounded
+                          source={{
+                            uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/andyvitale/128.jpg',
+                          }}
+                          activeOpacity={0.7}
+                        />
+                      </View>
+                      <Text
+                        style={{
+                          fontFamily: 'regular',
+                          fontSize: 15,
+                          marginLeft: 10,
+                          color: 'gray',
+                        }}
+                      >
+                        {x.FirstName+' '+ x.LastName+', '+x.Age}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        marginRight: 10,
+                      }}
+                    >
+                      <View
+                        style={{
+                          backgroundColor: 'rgba(222,222,222,1)',
+                          width: 28,
+                          height: 28,
+                          borderRadius: 100,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          marginHorizontal: 10,
+                        }}
+                      >
+                      {x.IsOut ? 
+                        <Icon2 name="close" color="red" size={20} onPress={()=> alert("h")} />
+                        :  <Icon2 name="check" color="green" size={20} onPress={()=> alert("h")} />
+                      }
+                      </View>
+                    </View>
+                    
+                  </View>
+                   )
+                 }  )}
+        
+         </ScrollView>
+               
 
-                 <View style={{flex:2 , flexDirection: 'column', marginBottom: 15, marginTop: 10 }} >
-
-                 
-                 </View>
-
-               </View> */}
 
              </View>
-               : 
+               :
                this.state.futureTrainingsOn ?
                <View>              </View>
                :    this.state.approvedRequestsOn ?
