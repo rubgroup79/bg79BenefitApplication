@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import ActionButton from 'react-native-action-button';
 import Icon1 from 'react-native-vector-icons/Feather';
 import Icon2 from 'react-native-vector-icons/AntDesign';
-
+import Icon3 from 'react-native-vector-icons/Foundation';
 import TimePickerNew from '../Components/TimePicker';
 import moment from 'moment';
 
@@ -187,14 +187,22 @@ export default class HomeTrainee extends Component {
 
   }
 
-getPendingRequests(){
-  // var details = {
-  //   //UserCode: this.props.navigation.getParam('userCode', '0'),
-  //   UserCode: 10,
-  //   Sender: true
-  // }
+getRequests(IsApproved){
+  
+  // מעבר על כל ההצעות ומחיקת הצעות שהשולח או המקבל כבר לא פעיל 
+  fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/UpdateSuggestionsStatus', {
 
-  fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/GetSuggestions?UserCode=28&Sender=true&IsApproved=true', {
+    method: 'POST',
+    headers: { "Content-type": "application/json; charset=UTF-8" },
+    body: JSON.stringify({}),
+  })
+    .then(res => res.json())
+    .then(response => { })
+    .catch(error => console.warn('Error:', error.message));
+
+// UserCode=this.props.navigation.getParam('userCode', '0')
+
+  fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/GetSuggestions?UserCode=28&IsApproved='+IsApproved, {
 
     method: 'GET',
     headers: { "Content-type": "application/json; charset=UTF-8" },
@@ -202,8 +210,60 @@ getPendingRequests(){
   })
     .then(res => res.json())
     .then(response => {
-     this.setState({pendingRequests: response})
-     console.warn(this.state.pendingRequests)
+      if (IsApproved)
+        this.setState({approvedRequests: response})
+      else 
+        this.setState({pendingRequests: response})
+    })
+    .catch(error => console.warn('Error:', error.message));
+}
+
+replySuggestion(suggestionCode, reply){
+ 
+  fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/CancelSuggestion?SuggestionCode='+suggestionCode+'&Reply='+reply, {
+
+    method: 'POST',
+    headers: { "Content-type": "application/json; charset=UTF-8" },
+    body: JSON.stringify({}),
+  })
+    .then(res => res.json())
+    .then(response => {
+      if (reply)
+      alert('Suggestion Accepted!');
+      else       alert('Suggestion Rejected!');
+
+    })
+    .catch(error => console.warn('Error:', error.message));
+}
+
+
+cancelSuggestion(SuggestionCode){
+  fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/CancelSuggestion?SuggestionCode='+SuggestionCode, {
+
+    method: 'POST',
+    headers: { "Content-type": "application/json; charset=UTF-8" },
+    body: JSON.stringify({}),
+  })
+    .then(res => res.json())
+    .then(response => {      
+      alert('Suggestion Canceled');
+
+    })
+    .catch(error => console.warn('Error:', error.message));
+}
+
+getFutureTrainings(){
+  // UserCode=this.props.navigation.getParam('userCode', '0')
+
+  fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/GetFutureTrainings?UserCode=28', {
+
+    method: 'POST',
+    headers: { "Content-type": "application/json; charset=UTF-8" },
+    body: JSON.stringify({}),
+  })
+    .then(res => res.json())
+    .then(response => {      
+      this.setState({futureTrainings: response})
     })
     .catch(error => console.warn('Error:', error.message));
 }
@@ -235,14 +295,14 @@ getPendingRequests(){
                   size="medium"
                   onPress={()=>{
                     this.setState({pendingRequestsOn: !this.state.pendingRequestsOn, approvedRequestsOn:false, futureTrainingsOn: false});
-                    this.getPendingRequests();
+                    this.getRequests();
                   }}
                 />
 
                 <Badge
                   status="warning"
                   containerStyle={{ position: 'absolute', top: -3, right: 35 }}
-                  value='8'
+                  value={this.state.pendingRequests.length()}
                 />
 
               </View>
@@ -255,13 +315,18 @@ getPendingRequests(){
                     APPROVED_REQUESTS
                   }
                   size="medium"
-                  onPress={()=> this.setState({approvedRequestsOn: true, pendingRequestsOn: false, futureTrainingsOn: false})}
-                />
+                  onPress={()=> 
+                    {
+                      this.setState({approvedRequestsOn: true, pendingRequestsOn: false, futureTrainingsOn: false})
+                      this.getRequests();
+                    }}
+               
+               />
 
                 <Badge
                   status="primary"
                   containerStyle={{ position: 'absolute', top: -3, right: 35 }}
-                  value='8'
+                  value={this.state.approvedRequests.length()}
                 />
 
               </View>
@@ -274,14 +339,18 @@ getPendingRequests(){
                     FUTURE_TRAININGS
                   }
                   size="medium"
-                  onPress={()=> this.setState({futureTrainingsOn: true, approvedRequestsOn: false, pendingRequestsOn: false})}
-
+                  onPress={()=>
+                    {
+                      this.setState({futureTrainingsOn: true, approvedRequestsOn: false, pendingRequestsOn: false})
+                      this.getFutureTrainings();
+                    }
+                  }
                 />
 
                 <Badge
                   status="success"
                   containerStyle={{ position: 'absolute', top: -3, right: 35 }}
-                  value='8'
+                  value={this.state.futureTrainings.length()}
                 />
 
               </View>
@@ -426,7 +495,7 @@ getPendingRequests(){
                           small
                           rounded
                           source={{
-                            uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/andyvitale/128.jpg',
+                            uri:x.Picture,
                           }}
                           activeOpacity={0.7}
                         />
@@ -439,7 +508,7 @@ getPendingRequests(){
                           color: 'gray',
                         }}
                       >
-                        {x.FirstName+' '+ x.LastName+', '+x.Age}
+                        {x.FirstName+' '+ x.LastName+', '+x.Age }
                       </Text>
                     </View>
                     <View
@@ -460,9 +529,22 @@ getPendingRequests(){
                           marginHorizontal: 10,
                         }}
                       >
+                    
+                    {x.isTrainer?
+                    
+                    <Icon3 name="dollar" color="red" size={20}  />
+                    :  null
+
+
+                    }
                       {x.IsOut ? 
-                        <Icon2 name="close" color="red" size={20} onPress={()=> alert("h")} />
-                        :  <Icon2 name="check" color="green" size={20} onPress={()=> alert("h")} />
+                        <Icon2 name="close" color="red" size={20} onPress={()=> cancelSuggestion(x.SuggestionCode)} />
+                        :
+                        <View>
+                        <Icon2 name="check" color="green" size={20} onPress={()=> replySuggestion(x.SuggestionCode,true)} />
+                        <Icon2 name="close" color="green" size={20} onPress={()=> replySuggestion(x.SuggestionCode,false)} />
+                        </View>
+
                       }
                       </View>
                     </View>
@@ -477,12 +559,98 @@ getPendingRequests(){
 
              </View>
                :
+
+
                this.state.futureTrainingsOn ?
                <View>              </View>
-               :    this.state.approvedRequestsOn ?
-               <View>              </View>
+               :  
+               
+               this.state.approvedRequestsOn ?
+               <View style={{ flex: 4, flexDirection: 'column',backgroundColor:  'rgba(222,222,222,1)', alignContent:"center"}}>
+                <View style={{flex:0.2, flexDirection:'column', alignContent: 'center'}}>
+
+                 <Text style={style = styles.trainingsHeadline}>
+                   Your Approved Requests
+                   </Text>
+                   </View>
+                   <ScrollView style={{ flex: 1, marginBottom: 20 }}>
+                 {this.state.approvedRequests.map(function (x) {
+                   return (
+                    <View
+                    style={{
+                      height: 60,
+                      marginHorizontal: 10,
+                      marginTop: 10,
+                      backgroundColor: 'white',
+                      borderRadius: 5,
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                    }}
+                  >
+                    <View style={{ flex: 2, flexDirection: 'row', alignItems: 'center' }}>
+                      <View style={{ marginLeft: 15 }}>
+                        <Avatar
+                          small
+                          rounded
+                          source={{
+                            uri:x.Picture,
+                          }}
+                          activeOpacity={0.7}
+                        />
+                      </View>
+                      <Text
+                        style={{
+                          fontFamily: 'regular',
+                          fontSize: 15,
+                          marginLeft: 10,
+                          color: 'gray',
+                        }}
+                      >
+                        {x.FirstName+' '+ x.LastName+', '+x.Age }
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        marginRight: 10,
+                      }}
+                    >
+                      <View
+                        style={{
+                          backgroundColor: 'rgba(222,222,222,1)',
+                          width: 28,
+                          height: 28,
+                          borderRadius: 100,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          marginHorizontal: 10,
+                        }}
+                      >
+                    
+                           {x.isTrainer ?
+                             <Icon3 name="dollar" color="red" size={20} />
+                             : null
+                           }
+
+                    <Icon2 name="message1" color="black" size={20} onPress={() => alert ("message")} />
+                          
+                      </View>
+                    </View>
+                    
+                  </View>
+                   )
+                 }  )}
+        
+         </ScrollView>
+               
+
+
+             </View>
+
                : null
-              }
+                }
+              
 
             <View style={{ flex: 6, }}>
 
