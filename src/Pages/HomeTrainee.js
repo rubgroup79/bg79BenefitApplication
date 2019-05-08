@@ -187,8 +187,8 @@ export default class HomeTrainee extends Component {
 
   }
 
-getRequests(IsApproved){
-  
+getRequests(IsApproved)
+{
   // מעבר על כל ההצעות ומחיקת הצעות שהשולח או המקבל כבר לא פעיל 
   fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/UpdateSuggestionsStatus', {
 
@@ -201,7 +201,6 @@ getRequests(IsApproved){
     .catch(error => console.warn('Error:', error.message));
 
 // UserCode=this.props.navigation.getParam('userCode', '0')
-
   fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/GetSuggestions?UserCode=28&IsApproved='+IsApproved, {
 
     method: 'GET',
@@ -210,6 +209,7 @@ getRequests(IsApproved){
   })
     .then(res => res.json())
     .then(response => {
+      console.warn(response)
       if (IsApproved)
         this.setState({approvedRequests: response})
       else 
@@ -247,7 +247,6 @@ cancelSuggestion(SuggestionCode){
     .then(res => res.json())
     .then(response => {      
       alert('Suggestion Canceled');
-
     })
     .catch(error => console.warn('Error:', error.message));
 }
@@ -295,14 +294,14 @@ getFutureTrainings(){
                   size="medium"
                   onPress={()=>{
                     this.setState({pendingRequestsOn: !this.state.pendingRequestsOn, approvedRequestsOn:false, futureTrainingsOn: false});
-                    this.getRequests();
+                    this.getRequests(false);
                   }}
                 />
 
                 <Badge
                   status="warning"
                   containerStyle={{ position: 'absolute', top: -3, right: 35 }}
-                  value={this.state.pendingRequests.length()}
+                  value={this.state.pendingRequests.length}
                 />
 
               </View>
@@ -318,7 +317,7 @@ getFutureTrainings(){
                   onPress={()=> 
                     {
                       this.setState({approvedRequestsOn: true, pendingRequestsOn: false, futureTrainingsOn: false})
-                      this.getRequests();
+                      this.getRequests(true);
                     }}
                
                />
@@ -326,7 +325,7 @@ getFutureTrainings(){
                 <Badge
                   status="primary"
                   containerStyle={{ position: 'absolute', top: -3, right: 35 }}
-                  value={this.state.approvedRequests.length()}
+                  value={this.state.approvedRequests.length}
                 />
 
               </View>
@@ -350,7 +349,7 @@ getFutureTrainings(){
                 <Badge
                   status="success"
                   containerStyle={{ position: 'absolute', top: -3, right: 35 }}
-                  value={this.state.futureTrainings.length()}
+                  value={this.state.futureTrainings.length}
                 />
 
               </View>
