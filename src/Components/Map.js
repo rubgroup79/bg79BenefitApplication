@@ -16,28 +16,65 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 export class CallOutCard extends React.Component {
   constructor(props) {
     super(props);
+
+    this.sendSuggestion= this.sendSuggestion.bind(this);
+    this.sendPushNotification= this.sendPushNotification.bind(this);
   }
 
-  sendSuggestion(ReceiverCode) {
-    fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/SendSuggestion?SenderCode=' + this.props.SenderCode + '&ReceiverCode=' + ReceiverCode, {
+  
+
+  sendSuggestion() {
+    fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/CheckActiveSuggestions?SenderCode=' + this.props.SenderCode + '&ReceiverCode=' + this.props.ReceiverCode, {
       method: 'GET',
       headers: { "Content-type": "application/json; charset=UTF-8" },
     })
       .then(res => res.json())
       .then(response => {
-        alert("Suggestion sent");
+        alert(response);
+        if (response.toString()=='Suggestion Sent!')
+        {
+          fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/GetToken?UserCode=' + this.props.ReceiverCode, {
+            method: 'GET',
+            headers: { "Content-type": "application/json; charset=UTF-8" },
+          })
+            .then(res => res.json())
+            .then(response => {
+              this.sendPushNotification(response);
+            })
+            .catch(error => console.warn('Error:', error.message));
+        }
+      
       })
       .catch(error => console.warn('Error:', error.message));
   }
+
+  sendPushNotification(ReceiverCode){
+    var pnd = {
+      to: ReceiverCode,
+      title: 'You have a new suggestion!',
+      body: '',
+      badge: 1
+    }
+    fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/sendpushnotification', {
+      body:JSON.stringify(pnd),
+      method: 'POST',
+      headers: { "Content-type": "application/json; charset=UTF-8" },
+    })
+      // .then(res => res.json())
+      .then(response => {
+      })
+      .catch(error => console.warn('Error:', error.message));
+  }
+  
 
   render() {
     return (
       <View style={{ flex: 1, flexDirection: 'column', justifyContent: "center", alignItems: "center" }}>
         <View style={{ flex: 2, flexDirection: 'column', justifyContent: "center" }}>
           <Image
-            source={{uri: this.props.Picture}}
-            //source={require("../../Images/TraineeAvatar.png")}
-            style={{ width: 35, height: 35 }}
+            //source={{uri: this.props.Picture}}
+            source={{uri:this.props.Picture.toString()}}
+            style={{ width: 35, height: 35, borderRadius:18 }}
           />
         </View>
         <View style={{ flex: 1, flexDirection: 'column', justifyContent: "center" }}>
@@ -47,7 +84,7 @@ export class CallOutCard extends React.Component {
         <Button
           title="Send Suggestion"
           titleStyle={{ fontWeight: 'bold', fontSize: 10 }}
-          onPress={() => { this.sendSuggestion(this.props.ReceiverCode) }}
+          onPress={() => { this.sendSuggestion() }}
           linearGradientProps={{
             colors: ['#FF9800', '#F44336'],
             start: [1, 0],
@@ -101,7 +138,6 @@ export default class LocationPage extends React.Component {
             longitudeDelta: 0.01321,
           }}
 
-
         >
           <MapView.Marker
             coordinate={{
@@ -111,20 +147,6 @@ export default class LocationPage extends React.Component {
           // title='my place:)'
           // description='here i am'
           >
-            <MapView.Callout
-              tooltip={false}>
-              {/* style={{ flex: 1, position: 'absolute', width: 100, height: 80 }} */}
-              <CallOutCard SenderCode={29} ReceiverCode={30} FirstName={'Dana'} LastName={'godo'} Distance={'45'} Age={'25'} Picture={"../../Images/TrainerAvatar.png"}></CallOutCard>
-              {/* <View style={{ flex: 1, flexDirection: 'column', justifyContent: "center", alignItems: "center" }}>
-
-            <Text>That's you</Text>
-        <Image
-          source={require("../../Images/TrainerAvatar.png")}
-          style={{ width: 50, height: 50 }}
-          
-        />
-        </View> */}
-            </MapView.Callout>
 
           </MapView.Marker>
           {this.props.coupleResults == null || this.props.coupleResults.length == 0 ? null :
@@ -140,7 +162,7 @@ export default class LocationPage extends React.Component {
 
               >
                 <MapView.Callout>
-                  <CallOutCard SenderCode={data.UserCode} FirstName={data.FirstName} LastName={data.LastName} Distance={data.Distance} Age={data.Age} Picture={data.Picture}></CallOutCard>
+                  <CallOutCard ReceiverCode={data.UserCode} SenderCode={this.props.SenderCode} FirstName={data.FirstName} LastName={data.LastName} Distance={data.Distance} Age={data.Age} Picture={data.Picture}></CallOutCard>
                 </MapView.Callout>
               </MapView.Marker>
             )
@@ -213,3 +235,4 @@ const styles = StyleSheet.create({
     fontSize: 30
   }
 });
+

@@ -159,7 +159,6 @@ export default class Login extends Component {
         headers: { "Content-type": "application/json; charset=UTF-8" },
         body: JSON.stringify({}),
       })
-        .then(res => res.json())
         .then(response => { })
         .catch(error => console.warn('Error:', error.message));
     
