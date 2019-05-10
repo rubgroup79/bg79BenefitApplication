@@ -21,8 +21,6 @@ export class CallOutCard extends React.Component {
     this.sendPushNotification= this.sendPushNotification.bind(this);
   }
 
-  
-
   sendSuggestion() {
     fetch('http://proj.ruppin.ac.il/bgroup79/test1/tar6/api/CheckActiveSuggestions?SenderCode=' + this.props.SenderCode + '&ReceiverCode=' + this.props.ReceiverCode, {
       method: 'GET',
@@ -66,7 +64,6 @@ export class CallOutCard extends React.Component {
       .catch(error => console.warn('Error:', error.message));
   }
   
-
   render() {
     return (
       <View style={{ flex: 1, flexDirection: 'column', justifyContent: "center", alignItems: "center" }}>
@@ -118,7 +115,6 @@ export default class LocationPage extends React.Component {
       latitude: 0,
       longitude: 0
     }
-
   }
 
   render() {
@@ -185,9 +181,7 @@ export default class LocationPage extends React.Component {
 
       </View>
     );
-
   }
-
 }
 
 const styles = StyleSheet.create({
@@ -199,7 +193,6 @@ const styles = StyleSheet.create({
     fontSize: 40,
     marginTop: -14,
     width: SCREEN_WIDTH + 20,
-
   },
 
   textBig: {

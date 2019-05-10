@@ -170,8 +170,7 @@ export default class ImageUpload extends Component {
                 aspect: [4, 3],
             });
 
-            this._handleImagePicked(pickerResult);
-            
+            this._handleImagePicked(pickerResult);          
         }
     };
 
@@ -230,9 +229,6 @@ async function uploadImageAsync(uri) {
  
     return fetch(apiUrl, options);
 }
-
-
-
 
 const styles = StyleSheet.create({
     container: {

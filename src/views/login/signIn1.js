@@ -254,7 +254,6 @@ export default class SignIn1 extends Component {
       if (x.Description == category) {
         x.selected = !x.selected;
       }
-
     });
   }
 

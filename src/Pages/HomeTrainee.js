@@ -296,8 +296,6 @@ export default class HomeTrainee extends Component {
             flex: 1
           }}
         >
-
-
           {x.isTrainer ?
             <View
               style={{
@@ -364,18 +362,14 @@ export default class HomeTrainee extends Component {
                 <Icon2 name="close" color="red" size={20} />
               </TouchableOpacity>
             </View>
-
           }
         </View>
       </View>
-
     )
   }
 
   renderApprovedSuggestions(x) {
     return (
-
-
       <View
       style={{
         height: 60,
@@ -418,8 +412,6 @@ export default class HomeTrainee extends Component {
           flex: 1
         }}
       >
-
-
         {x.isTrainer ?
           <View
             style={{
@@ -435,9 +427,7 @@ export default class HomeTrainee extends Component {
             <Icon3 name="dollar" color="red" size={20} />
           </View>
           : null
-        }
-
-       
+        }      
           <View style={{ flex: 1, flexDirection: 'row', alignContent: 'center', justifyContent: 'flex-end' }}>
             <TouchableOpacity
               style={{
@@ -467,12 +457,9 @@ export default class HomeTrainee extends Component {
             >
               <Icon2 name="close" color="red" size={20} />
             </TouchableOpacity>
-          </View>
-
-        
+          </View>      
       </View>
     </View>
-
     )
   }
 

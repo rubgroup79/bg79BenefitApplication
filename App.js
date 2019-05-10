@@ -18,7 +18,7 @@ import ListsScreen1 from './src/views/lists/screen1'
 import Settings from './src/drawer/settings';
 import HomeTrainee from './src/Pages/HomeTrainee';
 import HomeTrainer from './src/Pages/HomeTrainer';
-
+import TraineeProfile from './src/Pages/TraineeProfile';
 import CreateGroup from './src/Pages/createGroup';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -88,15 +88,18 @@ const MainRoot = DrawerNavigator(
       path: '/login',
       screen: Login,
     },
-    Profile: {
-      path: '/profile',
-      screen: Profile,
+    TraineeProfile: {
+      path: '/traineeProfile',
+      screen: TraineeProfile,
     },
     Lists: {
       path: '/lists',
       screen: Lists,
     },
-   
+    Profile: {
+      path: '/profile',
+      screen: Profile,
+    },
     Components: {
       path: '/components',
       screen: Components,
